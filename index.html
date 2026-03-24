@@ -81,6 +81,37 @@
             font-size: 0;
         }
 
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .menu-item {
+            padding: 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #545b64;
+            transition: all 0.3s ease;
+        }
+
+        .menu-item:hover {
+            background-color: #f0f0f0;
+        }
+
+        .menu-item.active {
+            background-color: #f0f7ff;
+            color: #1976d2;
+            font-weight: 600;
+        }
+
+        .sidebar.collapsed .menu-item {
+            padding: 12px 4px;
+            font-size: 0;
+        }
+
         .main-wrapper {
             width: 100%;
             overflow-y: auto;
@@ -99,7 +130,11 @@
             <div class="sidebar-title">Dashboard Version</div>
             <button class="toggle-btn" id="toggleBtn">◀</button>
         </div>
-        <div class="version-name active">NAP-mockup-v1-20260324</div>
+<!--        <div class="version-name active">NAP-mockup-v1-20260324</div>-->
+        <div class="sidebar-menu">
+            <div class="menu-item active" data-page="./toB HTML/NAP_tob_mockup_v1_20260324.html">NAP-mockup-v1-20260324</div>
+            <div class="menu-item" data-page="./toB HTML/tab1.html">Tab1</div>
+        </div>
     </div>
     <div class="main-wrapper">
         <iframe class="content-frame" id="contentFrame"></iframe>
@@ -109,6 +144,7 @@
         const frame = document.getElementById('contentFrame');
         const sidebar = document.getElementById('sidebar');
         const toggleBtn = document.getElementById('toggleBtn');
+        const menuItems = document.querySelectorAll('.menu-item');
         let isCollapsed = false;
 
         frame.src = './toB HTML/NAP_tob_mockup_v1_20260324.html';
@@ -120,6 +156,14 @@
             resizeFrame();
             frame.contentWindow.addEventListener('resize', resizeFrame);
         };
+
+        menuItems.forEach(item => {
+            item.addEventListener('click', () => {
+                menuItems.forEach(m => m.classList.remove('active'));
+                item.classList.add('active');
+                frame.src = item.dataset.page;
+            });
+        });
 
         toggleBtn.addEventListener('click', () => {
             isCollapsed = !isCollapsed;

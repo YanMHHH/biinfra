@@ -37,4 +37,11 @@ Body：
                              第二个X轴为in-stock商品数量，Y轴为Category，不同颜色有蓝色（Competitor Stores）、橙色（My Store）；
                              第三个X轴为in-stock商品数量，Y轴为Brand，不同颜色有蓝色（Competitor Stores）、橙色（My Store）；
 
-    Section4：放一个分隔标题：'My Store没有库存的'
+    Section4：放一个分隔标题：'My Store没有库存的商品'
+    Section5，三列结构，放两个table。第一个Table仅占一列，严格遵照qs-mockup-skill中的table定义。有如下字段：Brand，在售Competitor Stores数量，在售商品数量，请在这个Table中mock30条数据，按照商品数量从高到低排列；
+                                  第二个Table占两列，严格遵照qs-mockup-skill中的table定义。有如下字段：Product Image，Product Name，Brand，在售电商数、Full Price，Min Price，Max Price，Product Link，Gender，Category，Sub Category
+
+    Section6：放一个分隔标题：'Overlap商品'
+    Section7：
+
+

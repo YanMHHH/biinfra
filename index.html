@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NAP Mockup</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            height: 100vh;
+            background: #f5f5f5;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: 260px;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            box-shadow: 4px 0 16px rgba(0, 0, 0, 0.08);
+            z-index: 100;
+        }
+
+        .sidebar.collapsed {
+            width: 70px;
+        }
+
+        .sidebar-header {
+            padding: 24px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .sidebar-title {
+            font-weight: 600;
+            font-size: 13px;
+            white-space: nowrap;
+            color: #333;
+            letter-spacing: 0.3px;
+        }
+
+        .toggle-btn {
+            background: #f0f0f0;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 6px 8px;
+            border-radius: 6px;
+            color: #666;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .toggle-btn:hover {
+            background: #e8e8e8;
+        }
+
+        .sidebar-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px 0;
+            scrollbar-width: thin;
+            scrollbar-color: #ddd transparent;
+        }
+
+        .sidebar-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar-content::-webkit-scrollbar-thumb {
+            background: #ddd;
+            border-radius: 3px;
+        }
+
+        .nav-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .nav-item:hover {
+            background: #f8f8f8;
+            color: #333;
+        }
+
+        .nav-item.active {
+            background: #f0f7ff;
+            color: #1976d2;
+            font-weight: 500;
+            border-left-color: #1976d2;
+        }
+
+        .sidebar.collapsed .nav-item {
+            padding: 12px 8px;
+            text-align: center;
+            font-size: 0;
+        }
+
+        .sidebar.collapsed .sidebar-title {
+            display: none;
+        }
+
+        .main-content {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .content-frame {
+            flex: 1;
+            border: none;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span class="sidebar-title">Version Control</span>
+            <button class="toggle-btn" id="toggleBtn">◀</button>
+        </div>
+        <div class="sidebar-content" id="navList"></div>
+    </div>
+
+    <div class="main-content">
+        <iframe class="content-frame" id="contentFrame"></iframe>
+    </div>
+
+    <script>
+        const pages = [
+            { name: 'NAP mockup v1', path: './toB HTML/NAP_tob_mockup_v1_20260324.html' },
+            { name: 'NAP mockup v0', path: './toB HTML/NAP_tob_mockup_20260323.html' }
+        ];
+
+        const sidebar = document.getElementById('sidebar');
+        const toggleBtn = document.getElementById('toggleBtn');
+        const navList = document.getElementById('navList');
+        const contentFrame = document.getElementById('contentFrame');
+        let isCollapsed = false;
+
+        // 初始化导航列表
+        function initNav() {
+            navList.innerHTML = pages.map((page, idx) =>
+                `<div class="nav-item ${idx === 0 ? 'active' : ''}" data-path="${page.path}">${page.name}</div>`
+            ).join('');
+
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                    item.classList.add('active');
+                    contentFrame.src = item.dataset.path;
+                });
+            });
+        }
+
+        // 切换侧边栏
+        toggleBtn.addEventListener('click', () => {
+            isCollapsed = !isCollapsed;
+            sidebar.classList.toggle('collapsed');
+            toggleBtn.textContent = isCollapsed ? '▶' : '◀';
+        });
+
+        // 初始化
+        initNav();
+        contentFrame.src = pages[0].path;
+    </script>
+</body>
+</html>

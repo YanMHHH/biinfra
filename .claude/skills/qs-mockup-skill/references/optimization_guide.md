@@ -49,3 +49,14 @@ function toggleControls() {
 - [ ] 特殊宽度图表使用 flex 控制
 - [ ] 表格生成 10-15 行数据
 - [ ] 表格调用 makeColumnsResizable() 函数
+- [ ] 表格标题 `.chart-title` 设置 `position: sticky; top: 0; z-index: 9;`
+
+### 2.1 自定义滚动条检查清单（数据20+条时）
+
+- [ ] Chart 实例保存为变量：`const chartInstance = new Chart(...)`
+- [ ] 滚动条初始化在 Chart 创建后立即执行
+- [ ] 验证所有 DOM 元素存在：track、thumb、topHandle、bottomHandle
+- [ ] `updateChartAndView()` 函数中调用 `chartInstance.update()`
+- [ ] 鼠标事件正确绑定到 thumb 和 handles
+- [ ] 边界检查：viewStart >= 0，viewEnd < totalItems
+- [ ] 滚轮事件添加 `e.preventDefault()`

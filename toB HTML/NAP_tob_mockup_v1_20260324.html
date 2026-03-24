@@ -105,7 +105,7 @@
 
         /* === 核心更新：Charts & Tables === */
         .chart-header { margin-bottom: 10px; }
-        .chart-title { font-size: 16px; font-weight: bold; color: var(--qs-text-main); }
+        .chart-title { font-size: 16px; font-weight: bold; color: var(--qs-text-main); position: sticky; top: 0; z-index: 9; background-color: var(--qs-white); }
         .chart-description { font-size: 12px; color: var(--qs-text-muted); margin-top: 4px; }
 
         /* 限制表格最高 400px，超出滚动 */
@@ -190,7 +190,7 @@ table.qs-table th {
             border-bottom: 1px solid var(--qs-border-dark);
             padding: 8px 10px;
             text-align: center;
-            position: relative;
+            position: sticky;
         }
 
         table.qs-table td {
@@ -256,6 +256,10 @@ table.qs-table th {
             font-weight: 600;
             color: #000000;
             margin-bottom: 4px;
+            position: sticky;
+            top: 0;
+            z-index: 9;
+            background-color: var(--qs-white);
         }
         .chart-description {
             font-size: 12px;
@@ -539,6 +543,36 @@ table.qs-table th {
                         </div>
                     </div>
                 </div>
+
+                <!-- Section 3: Product List Table -->
+                <div class="visual-card">
+                    <div class="chart-header">
+                        <div class="chart-title">Product List</div>
+                    </div>
+                    <div class="table-scroll-container">
+                        <table class="qs-table">
+                            <thead>
+                                <tr>
+                                    <th>Product Image</th>
+                                    <th>Product Name</th>
+                                    <th>Brand</th>
+                                    <th>Full Price</th>
+                                    <th>My Store Price</th>
+                                    <th>Discount</th>
+                                    <th>Price Type</th>
+                                    <th>Min Price</th>
+                                    <th>Max Price</th>
+                                    <th>Product Link</th>
+                                    <th>Gender</th>
+                                    <th>Category</th>
+                                    <th>Sub Category</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -712,7 +746,59 @@ table.qs-table th {
         document.addEventListener('DOMContentLoaded', function() {
             makeColumnsResizable();
 
-            // 步长计算函数
+            // 产品数据
+            const productData = [
+                { img: '/assets/100*100.svg', name: 'Classic Leather Handbag', brand: 'Gucci', fullPrice: 2800, myPrice: 2240, discount: '20%', priceType: 'Highest', minPrice: 1950, maxPrice: 3200, gender: 'Female', category: 'Bag', subCategory: 'Handbag' },
+                { img: '/assets/100*100.svg', name: 'Silk Evening Dress', brand: 'Prada', fullPrice: 3500, myPrice: 2625, discount: '25%', priceType: 'Average', minPrice: 2800, maxPrice: 4200, gender: 'Female', category: 'Clothing', subCategory: 'Dress' },
+                { img: '/assets/100*100.svg', name: 'Designer Sneakers', brand: 'Chanel', fullPrice: 1200, myPrice: 960, discount: '20%', priceType: 'Lowest', minPrice: 850, maxPrice: 1500, gender: 'Unisex', category: 'Shoes', subCategory: 'Sneaker' },
+                { img: '/assets/100*100.svg', name: 'Luxury Watch', brand: 'Dior', fullPrice: 5000, myPrice: 4000, discount: '20%', priceType: 'Highest', minPrice: 3500, maxPrice: 6000, gender: 'Unisex', category: 'Accessories', subCategory: 'Watch' },
+                { img: '/assets/100*100.svg', name: 'Premium Sunglasses', brand: 'Louis Vuitton', fullPrice: 450, myPrice: 337, discount: '25%', priceType: 'Average', minPrice: 380, maxPrice: 550, gender: 'Unisex', category: 'Accessories', subCategory: 'Eyewear' },
+                { img: '/assets/100*100.svg', name: 'Cashmere Sweater', brand: 'Hermès', fullPrice: 1800, myPrice: 1440, discount: '20%', priceType: 'Lowest', minPrice: 1200, maxPrice: 2100, gender: 'Female', category: 'Clothing', subCategory: 'Sweater' },
+                { img: '/assets/100*100.svg', name: 'Wool Coat', brand: 'Balenciaga', fullPrice: 2200, myPrice: 1650, discount: '25%', priceType: 'Highest', minPrice: 1800, maxPrice: 2800, gender: 'Female', category: 'Clothing', subCategory: 'Coat' },
+                { img: '/assets/100*100.svg', name: 'Crossbody Bag', brand: 'Saint Laurent', fullPrice: 1950, myPrice: 1462, discount: '25%', priceType: 'Average', minPrice: 1600, maxPrice: 2400, gender: 'Female', category: 'Bag', subCategory: 'Crossbody' },
+                { img: '/assets/100*100.svg', name: 'High Heels', brand: 'Valentino', fullPrice: 1100, myPrice: 880, discount: '20%', priceType: 'Lowest', minPrice: 750, maxPrice: 1400, gender: 'Female', category: 'Shoes', subCategory: 'Heels' },
+                { img: '/assets/100*100.svg', name: 'Leather Belt', brand: 'Bottega Veneta', fullPrice: 650, myPrice: 487, discount: '25%', priceType: 'Highest', minPrice: 550, maxPrice: 800, gender: 'Unisex', category: 'Accessories', subCategory: 'Belt' },
+                { img: '/assets/100*100.svg', name: 'Perfume 100ml', brand: 'Fendi', fullPrice: 280, myPrice: 210, discount: '25%', priceType: 'Average', minPrice: 220, maxPrice: 350, gender: 'Female', category: 'Beauty', subCategory: 'Fragrance' },
+                { img: '/assets/100*100.svg', name: 'Silk Scarf', brand: 'Givenchy', fullPrice: 380, myPrice: 285, discount: '25%', priceType: 'Lowest', minPrice: 300, maxPrice: 480, gender: 'Female', category: 'Accessories', subCategory: 'Scarf' },
+                { img: '/assets/100*100.svg', name: 'Denim Jeans', brand: 'Burberry', fullPrice: 850, myPrice: 637, discount: '25%', priceType: 'Highest', minPrice: 700, maxPrice: 1050, gender: 'Unisex', category: 'Clothing', subCategory: 'Jeans' },
+                { img: '/assets/100*100.svg', name: 'Tote Bag', brand: 'Celine', fullPrice: 1600, myPrice: 1200, discount: '25%', priceType: 'Average', minPrice: 1300, maxPrice: 1900, gender: 'Female', category: 'Bag', subCategory: 'Tote' },
+                { img: '/assets/100*100.svg', name: 'Loafers', brand: 'Loewe', fullPrice: 950, myPrice: 712, discount: '25%', priceType: 'Lowest', minPrice: 800, maxPrice: 1200, gender: 'Male', category: 'Shoes', subCategory: 'Loafers' },
+                { img: '/assets/100*100.svg', name: 'Bracelet', brand: 'Alexander McQueen', fullPrice: 520, myPrice: 390, discount: '25%', priceType: 'Highest', minPrice: 450, maxPrice: 650, gender: 'Female', category: 'Accessories', subCategory: 'Bracelet' },
+                { img: '/assets/100*100.svg', name: 'Lipstick Set', brand: 'Versace', fullPrice: 180, myPrice: 135, discount: '25%', priceType: 'Average', minPrice: 150, maxPrice: 220, gender: 'Female', category: 'Beauty', subCategory: 'Makeup' },
+                { img: '/assets/100*100.svg', name: 'Polo Shirt', brand: 'Dolce & Gabbana', fullPrice: 620, myPrice: 465, discount: '25%', priceType: 'Lowest', minPrice: 500, maxPrice: 750, gender: 'Male', category: 'Clothing', subCategory: 'Shirt' },
+                { img: '/assets/100*100.svg', name: 'Blazer', brand: 'Miu Miu', fullPrice: 1400, myPrice: 1050, discount: '25%', priceType: 'Highest', minPrice: 1200, maxPrice: 1700, gender: 'Female', category: 'Clothing', subCategory: 'Blazer' },
+                { img: '/assets/100*100.svg', name: 'Clutch', brand: 'Off-White', fullPrice: 890, myPrice: 667, discount: '25%', priceType: 'Average', minPrice: 750, maxPrice: 1100, gender: 'Female', category: 'Bag', subCategory: 'Clutch' },
+                { img: '/assets/100*100.svg', name: 'Boots', brand: 'Kenzo', fullPrice: 1300, myPrice: 975, discount: '25%', priceType: 'Lowest', minPrice: 1100, maxPrice: 1600, gender: 'Female', category: 'Shoes', subCategory: 'Boots' },
+                { img: '/assets/100*100.svg', name: 'Necklace', brand: 'Balmain', fullPrice: 780, myPrice: 585, discount: '25%', priceType: 'Highest', minPrice: 650, maxPrice: 950, gender: 'Female', category: 'Accessories', subCategory: 'Necklace' },
+                { img: '/assets/100*100.svg', name: 'Face Cream', brand: 'Lanvin', fullPrice: 220, myPrice: 165, discount: '25%', priceType: 'Average', minPrice: 180, maxPrice: 280, gender: 'Female', category: 'Beauty', subCategory: 'Skincare' },
+                { img: '/assets/100*100.svg', name: 'T-Shirt', brand: 'Maison Margiela', fullPrice: 480, myPrice: 360, discount: '25%', priceType: 'Lowest', minPrice: 400, maxPrice: 600, gender: 'Unisex', category: 'Clothing', subCategory: 'T-Shirt' },
+                { img: '/assets/100*100.svg', name: 'Shorts', brand: 'Thom Browne', fullPrice: 550, myPrice: 412, discount: '25%', priceType: 'Highest', minPrice: 480, maxPrice: 680, gender: 'Male', category: 'Clothing', subCategory: 'Shorts' },
+                { img: '/assets/100*100.svg', name: 'Backpack', brand: 'Issey Miyake', fullPrice: 1100, myPrice: 825, discount: '25%', priceType: 'Average', minPrice: 950, maxPrice: 1350, gender: 'Unisex', category: 'Bag', subCategory: 'Backpack' },
+                { img: '/assets/100*100.svg', name: 'Sandals', brand: 'Jil Sander', fullPrice: 680, myPrice: 510, discount: '25%', priceType: 'Lowest', minPrice: 580, maxPrice: 850, gender: 'Unisex', category: 'Shoes', subCategory: 'Sandals' },
+                { img: '/assets/100*100.svg', name: 'Ring', brand: 'Haider Ackermann', fullPrice: 420, myPrice: 315, discount: '25%', priceType: 'Highest', minPrice: 350, maxPrice: 520, gender: 'Female', category: 'Accessories', subCategory: 'Ring' },
+                { img: '/assets/100*100.svg', name: 'Serum', brand: 'Rick Owens', fullPrice: 150, myPrice: 112, discount: '25%', priceType: 'Average', minPrice: 130, maxPrice: 190, gender: 'Female', category: 'Beauty', subCategory: 'Skincare' }
+            ];
+
+            // 生成产品表格
+            const tbody = document.getElementById('productTableBody');
+            productData.forEach(p => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td><img src="${p.img}" class="qs-product-img" onerror="this.parentElement.innerHTML='<div class=qs-img-placeholder>N/A</div>'"></td>
+                    <td>${p.name}</td>
+                    <td>${p.brand}</td>
+                    <td>$${p.fullPrice}</td>
+                    <td>$${p.myPrice}</td>
+                    <td>${p.discount}</td>
+                    <td>${p.priceType}</td>
+                    <td>$${p.minPrice}</td>
+                    <td>$${p.maxPrice}</td>
+                    <td><a href="https://www.modesens.com" target="_blank" style="color: #0073bb; text-decoration: none;">Link</a></td>
+                    <td>${p.gender}</td>
+                    <td>${p.category}</td>
+                    <td>${p.subCategory}</td>
+                `;
+            });
             const getStepSize = (max) => {
                 const magnitude = Math.pow(10, Math.floor(Math.log10(max)));
                 const normalized = max / magnitude;
@@ -1082,7 +1168,7 @@ table.qs-table th {
                 { name: 'Rick Owens', myStore: 20, competitors: 25 }
             ].sort((a, b) => (b.myStore + b.competitors) - (a.myStore + a.competitors));
 
-            new Chart(document.getElementById('inventoryBrandChart'), {
+            const invChartInstance = new Chart(document.getElementById('inventoryBrandChart'), {
                 type: 'bar',
                 data: {
                     labels: inventoryBrandData.map(d => d.name),
@@ -1116,7 +1202,6 @@ table.qs-table th {
                 let invStartY = 0;
                 let invInitialStart = 0;
                 let invInitialEnd = 0;
-                let invChartInstance = Chart.instances.find(c => c.canvas && c.canvas.id === 'inventoryBrandChart');
 
                 function updateInvChartAndView() {
                     if (!invChartInstance) return;

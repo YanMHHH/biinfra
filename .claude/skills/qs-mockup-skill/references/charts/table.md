@@ -49,6 +49,7 @@
 - **CSS 要求**：`table.qs-table th` 和 `table.qs-table td` 必须设置 `position: sticky`
   - `th` 需要 `top: 0; z-index: 10;` 保持表头固定
   - `td` 需要 `position: sticky` 支持横向滚动时列固定
+- **表格标题**：`.chart-title` 必须设置 `position: sticky; top: 0; z-index: 9;` 强制粘性定位
 
 ### 2.5 列宽调整
 - 模板已内置列宽拖拽功能
@@ -67,21 +68,17 @@
 ### 3.1 触发条件
 当字段名含"图片/Image/Icon/头像"时，执行商品图片自动匹配逻辑。
 
-### 3.2 匹配规则表
+### 3.2 图片占位符规则
 
-| 逻辑条件 (关键字匹配) | 对应图片路径 | Class |
+所有表格中的图片统一使用占位符：`/assets/100*100.svg`
+
+| 场景 | 图片路径 | Class |
 |:---|:---|:---|
-| 包含 "箱包"、"包"、"手提袋" | `assets/bag.png` | `qs-product-img` |
-| 包含 "裙子"、"女装"、"连衣裙" | `assets/skirt.png` | `qs-product-img` |
-| 包含 "T恤"、"男装"、"短袖"、"上衣" | `assets/tshirt.png` | `qs-product-img` |
-| 包含 "鞋"、"运动鞋"、"球鞋" | `assets/shoes.png` | `qs-product-img` |
-| 包含 "手表"、"腕表" | `assets/watch.png` | `qs-product-img` |
-| 包含 "电子"、"手机"、"数码" | `assets/electronics.png` | `qs-product-img` |
-| 未指定品类 或 不匹配上述条件 | 从上述路径中随机选择一个 | `qs-product-img` |
+| 所有表格图片列 | `/assets/100*100.svg` | `qs-product-img` |
 
 ### 3.3 生成代码示例
 ```html
-<img src="assets/bag.png" class="qs-product-img" alt="product">
+<img src="/assets/100*100.svg" class="qs-product-img" alt="product">
 ```
 
 ### 3.4 降级方案
@@ -119,7 +116,7 @@
             </thead>
             <tbody>
                 <tr>
-                    <td><img src="assets/bag.png" class="qs-product-img" alt="product"></td>
+                    <td><img src="/assets/100*100.svg" class="qs-product-img" alt="product"></td>
                     <td>箱包</td>
                     <td>经典款真皮手提包 - 适合商务通勤使用</td>
                     <td>1,234</td>

@@ -19,11 +19,15 @@ Controls：Country, Category, Gender, Conditions, Comparison Scope, Brand
 Body：
   Section1：3个KPI卡片，分别代表Priced Highest Products、Priced Lowest Products、Priced Average Products。这三个卡片的正中间写商品数量，下方有个百分比条，显示占所有商品的百分比
   Section2：有3个组件，第一个组件是堆叠柱状图，X轴为Category、Y轴为商品数量，不同的颜色有 红色（Priced Highest）、灰色（Priced Average）、绿色（Priced Lowest）；第二个组件也是堆叠柱状图，X轴为性别、Y轴为商品数量，不同的颜色有 红色（Priced Highest）、灰色（Priced Average）、绿色（Priced Lowest）；第三个组件也是堆叠柱状图，X轴为库存量Top20的Brand、、Y轴为商品数量，不同的颜色有 红色（Priced Highest）、灰色（Priced Average）、绿色（Priced Lowest）
+  Section3：在tab2中，追加Product List Table，严格遵照qs-mockup-skill中的table定义。有如下字段：
+  Product Image，Product Name，Brand，Full Price，My Store Price，Discount，My Store Price Type（代表提供了最低、最高还是中间价格），Min Price，Max Price，Product
+  Link（为可点击链接，点击后统一跳转到modesens.com），Gender，Category，Sub Category
+  mock 30条数据
 
 
 
 
-请严格按照qs-mockup-skill中quicksight的要求进行toB的mockup设计，在NAP_tob_mockup_0260323.html中新建Tab3，名称为库存分析
+请严格按照qs-mockup-skill中quicksight的要求进行toB的mockup设计，在NAP_tob_mockup_v1_20260324.html中新建Tab3，名称为库存分析
 在Tab3 库存分析中：
 Controls：Country, Category, Gender, Conditions, Brand
 Body：
@@ -32,3 +36,5 @@ Body：
     Section3：有三个堆叠柱状图。第一个X轴为in-stock商品数量，Y轴为Gender，不同颜色有蓝色（Competitor Stores）、橙色（My Store）；
                              第二个X轴为in-stock商品数量，Y轴为Category，不同颜色有蓝色（Competitor Stores）、橙色（My Store）；
                              第三个X轴为in-stock商品数量，Y轴为Brand，不同颜色有蓝色（Competitor Stores）、橙色（My Store）；
+
+    Section4：放一个分隔标题：'My Store没有库存的'

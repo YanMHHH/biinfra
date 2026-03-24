@@ -258,5 +258,10 @@ if (track && thumb && topHandle && bottomHandle) {
 2. X轴步长使用 getStepSize 函数自动计算
 3. 颜色方案保持一致：红色（高）、灰色（中）、绿色（低）
 4. 图表高度统一为 400px，保持视觉一致性
-5. 自定义滚动条需要将Chart实例保存为变量以支持动态更新
+5. **关键：自定义滚动条必须保存Chart实例为变量**
+   - ❌ 错误：`new Chart(...)` 直接创建，后续无法引用
+   - ✅ 正确：`const chartInstance = new Chart(...)` 保存为变量
+   - 原因：滚动条交互需要调用 `chartInstance.update()` 更新图表
+6. 滚动条初始化必须在Chart创建后立即执行
+7. 确保所有DOM元素（track、thumb、handles）都存在后再绑定事件
 ```

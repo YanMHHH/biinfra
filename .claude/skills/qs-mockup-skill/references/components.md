@@ -37,15 +37,15 @@ Controls 区域填充至模板中的 `<!-- CONTROLS_PLACEHOLDER -->`，必须支
 
 ### 1.3 预设字段下拉选项
 
-| 字段名              | 默认值                     | 下拉选项                                               |
-|:-----------------|:------------------------|:---------------------------------------------------|
-| Gender           | All                     | Female, Male, Unisex, Kids                         |
-| Category         | All                     | Clothing, Shoes, Bag, Home, Beauty                 |
-| Conditions       | All                     | New, Pre-owned                                     |
-| Country          | US                      | US, CA, AU, CN                                     |
-| Comparison Type  | Competitor AVG          | Competitor MAX, Competitor MIN                     |
-| Comparison Scope | Across Competitor Store | Across All Stores                                  |
-| Brand            | All                     | GUCCI, PRADA, Belenciaga, Valentino, Burberry, ... |
+| 字段名              | 默认值                      | 下拉选项                                               |
+|:-----------------|:-------------------------|:---------------------------------------------------|
+| Gender           | All                      | Female, Male, Unisex, Kids                         |
+| Category         | All                      | Clothing, Shoes, Bag, Home, Beauty                 |
+| Conditions       | All                      | New, Pre-owned                                     |
+| Country          | US                       | US, CA, AU, CN                                     |
+| Comparison Type  | Compare to Avg           | Compare to Max, Compare to Min                     |
+| Comparison Scope | Across Competitor Stores | Across All Modesens Stores                         |
+| Brand            | All                      | GUCCI, PRADA, Belenciaga, Valentino, Burberry, ... |
 
 ### 1.4 展开/收起实现
 - 默认保持展开状态
@@ -67,7 +67,7 @@ Controls 区域填充至模板中的 `<!-- CONTROLS_PLACEHOLDER -->`，必须支
 </div>
 ```
 
-- **标题**：16px 黑色加粗字体，如果用户未指定标题，显示"图表标题待定义"
+- **标题**：15px 黑色加粗字体，如果用户未指定标题，显示"图表标题待定义"
 - **说明**：12px 灰色字体，仅在用户明确提供说明时显示，超出宽度自动折行
 
 ---

@@ -41,7 +41,6 @@ function toggleControls() {
 - [ ] Controls 区域有展开/收起功能
 - [ ] 图表高度为宽度的 0.9 倍
 - [ ] Legend 图标 12px，字体 11px
-- [ ] 日期格式为 YYYY-MM-DD
 - [ ] 金额类指标添加 $ 前缀
 - [ ] 百分比指标添加 % 后缀
 - [ ] 每个图表独立在 visual-card 中

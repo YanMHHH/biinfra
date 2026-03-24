@@ -27,7 +27,7 @@
             color: var(--qs-text-main);
         }
 
-        /* 滚动条美化 (让滚动更像真实的 BI 系统) */
+        /* Scrollbar styling (make scrolling more like a real BI system) */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
@@ -100,19 +100,19 @@
             background-color: var(--qs-white); border: 1px solid var(--qs-border-dark);
             padding: 15px; box-shadow: 0 1px 1px 0 rgba(0,28,36,.05);
         }
-        .text-box { font-size: 16px; line-height: 1.6; font-weight: bold; }
+        .text-box { font-size: 15px; line-height: 1.6; font-weight: bold; }
         .section-divider { text-align: center; font-weight: bold; color: var(--qs-highlight-red); padding: 10px; }
 
-        /* === 核心更新：Charts & Tables === */
+        /* === Core Update: Charts & Tables === */
         .chart-header { margin-bottom: 10px; }
-        .chart-title { font-size: 16px; font-weight: bold; color: var(--qs-text-main); position: sticky; top: 0; z-index: 9; background-color: var(--qs-white); }
+        .chart-title { font-size: 15px; font-weight: bold; color: var(--qs-text-main); position: sticky; top: 0; z-index: 9; background-color: var(--qs-white); }
         .chart-description { font-size: 12px; color: var(--qs-text-muted); margin-top: 4px; }
 
-        /* 限制表格最高 400px，超出滚动 */
+        /* Limit table max height to 400px, scroll beyond */
         .table-scroll-container {
-            max-height: 400px; /* 需求3: 指定最高高度为400px */
-            overflow: auto;    /* 需求2 & 3: 自动出现上下、左右滚动条 */
-            border: 1px solid var(--qs-border-dark); /* 外层边框，防止滚动时边框丢失 */
+            max-height: 400px; /* Requirement 3: Set max height to 400px */
+            overflow: auto;    /* Requirement 2 & 3: Auto show vertical and horizontal scrollbars */
+            border: 1px solid var(--qs-border-dark); /* Outer border to prevent border loss during scroll */
         }
 
         table.qs-table {
@@ -122,18 +122,18 @@
         }
 
 
-/* === 新增：真实商品图片样式 === */
+/* === New: Real product image styling === */
 .qs-product-img {
     width: 40px;
     height: 40px;
-    object-fit: cover; /* 确保图片比例不失真 */
+    object-fit: cover; /* Ensure image aspect ratio is not distorted */
     border: 1px solid var(--qs-border);
     border-radius: 4px;
     display: block;
     margin: 0 auto;
 }
 
-/* 保留占位符作为兜底方案 */
+/* Keep placeholder as fallback */
 .qs-img-placeholder {
     width: 40px;
     height: 40px;
@@ -147,7 +147,7 @@
     margin: 0 auto;
 }
 
-/* === 新增：表头折行逻辑 === */
+/* === New: Table header line-wrapping logic === */
 table.qs-table th {
     background-color: var(--qs-table-header);
     color: var(--qs-white);
@@ -165,7 +165,7 @@ table.qs-table th {
     vertical-align: middle;
 }
 
-/* 列宽调整功能 */
+/* Column width adjustment functionality */
 .resizer {
     position: absolute;
     top: 0;
@@ -180,7 +180,7 @@ table.qs-table th {
     border-right: 2px solid #0073bb;
 }
 
-/* 如果某些列确实不需要折行，可以保留这个类 */
+/* If some columns don't need line wrapping, keep this class */
 .no-wrap {
     white-space: nowrap !important;
 }
@@ -211,7 +211,7 @@ table.qs-table th {
         .row { display: flex; gap: 10px; }
         .col { flex: 1; }
 
-        /* KPI 卡片样式 */
+        /* KPI card styling */
         .kpi-card {
             text-align: center;
             padding: 30px 20px;
@@ -227,19 +227,19 @@ table.qs-table th {
             color: var(--qs-text-muted);
         }
 
-        /* 图表占位符样式 */
+        /* Chart placeholder styling */
         .chart-placeholder {
             display: flex;
             align-items: center;
             justify-content: center;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             color: var(--qs-text-muted);
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 500;
             border-radius: 4px;
         }
 
-        /* 图表canvas自适应 */
+        /* Chart canvas auto-fit */
         canvas {
             max-width: 100%;
         }
@@ -247,12 +247,12 @@ table.qs-table th {
             height: auto !important;
         }
 
-        /* 图表标题和说明 */
+        /* Chart title and description */
         .chart-header {
             margin-bottom: 12px;
         }
         .chart-title {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
             color: #000000;
             margin-bottom: 4px;
@@ -270,14 +270,12 @@ table.qs-table th {
 </head>
 <body>
     <div class="page-container">
-        <div class="navbar">
-            <div style="font-size: 12px; color: #545b64; margin: 0 auto;">&#128269; Analyze this dashboard in a Scenario</div>
-        </div>
+
 
         <div class="tabs">
-            <div class="tab active" id="tab-sales" onclick="switchTab('sales')">销售分析</div>
-            <div class="tab" id="tab-price" onclick="switchTab('price')">价格分析</div>
-            <div class="tab" id="tab-inventory" onclick="switchTab('inventory')">库存分析</div>
+            <div class="tab active" id="tab-sales" onclick="switchTab('sales')">Sales Analysis</div>
+            <div class="tab" id="tab-price" onclick="switchTab('price')">Price Analysis</div>
+            <div class="tab" id="tab-inventory" onclick="switchTab('inventory')">Inventory Analysis</div>
         </div>
 
         <div id="content-sales" class="tab-content active">
@@ -289,12 +287,10 @@ table.qs-table th {
                     <div class="control-item">
                         <label>Start Date</label>
                         <input type="date" value="2026-01-01">
-                        <div class="control-hint">YYYY-MM-DD</div>
                     </div>
                     <div class="control-item">
                         <label>End Date</label>
                         <input type="date" value="2026-03-23">
-                        <div class="control-hint">YYYY-MM-DD</div>
                     </div>
                     <div class="control-item">
                         <label>Country</label>
@@ -314,7 +310,7 @@ table.qs-table th {
                     </div>
                     <div class="control-item">
                         <label>Comparison Type</label>
-                        <select><option>Competitor AVG</option><option>Competitor MAX</option><option>Competitor MIN</option></select>
+                        <select><option>Compare to Avg</option><option>Compare to Max</option><option>Compare to Min</option></select>
                     </div>
                     <div class="control-item">
                         <label>Brand</label>
@@ -324,6 +320,11 @@ table.qs-table th {
             </div>
 
             <div class="main-content">
+                <!-- Section 1: Text Box -->
+                <div class="visual-card">
+                    <div class="text-box">My Competitor Stores: Mytheresa, Moda Operandi, Neiman Marcus, SSENSE, Farfetch</div>
+                </div>
+
                 <!-- Section 1: Table -->
                 <div class="visual-card">
                     <div class="chart-header">
@@ -463,7 +464,7 @@ table.qs-table th {
                     </div>
                     <div class="control-item">
                         <label>Comparison Scope</label>
-                        <select><option>Across Competitor Store</option><option>Across All Stores</option></select>
+                        <select><option>Across Competitor Stores</option><option>Across All Modesens Stores</option></select>
                     </div>
                     <div class="control-item">
                         <label>Brand</label>
@@ -473,6 +474,11 @@ table.qs-table th {
             </div>
 
             <div class="main-content">
+                <!-- Section 1: Text Box -->
+                <div class="visual-card">
+                    <div class="text-box">My Competitor Stores: </div>
+                </div>
+
                 <!-- Section 1: KPI Cards -->
                 <div class="row">
                     <div class="col">
@@ -515,7 +521,7 @@ table.qs-table th {
                     <div class="col">
                         <div class="visual-card">
                             <div class="chart-header">
-                                <div class="chart-title">Price Distribution by Category</div>
+                                <div class="chart-title">My Store Product Count by Price Level & Category</div>
                             </div>
                             <div style="height: 400px;">
                                 <canvas id="categoryChart"></canvas>
@@ -525,9 +531,9 @@ table.qs-table th {
                     <div class="col">
                         <div class="visual-card">
                             <div class="chart-header">
-                                <div class="chart-title">Price Distribution by Top 20 Brands</div>
+                                <div class="chart-title">My Store Product Count by Price Level & Brand</div>
                             </div>
-                            <div style="position: relative; height: 400px; padding-right: 16px;" id="brandChartWrapper">
+                            <div style="position: relative; height: 400px; padding-right: 15px;" id="brandChartWrapper">
                                 <canvas id="brandChart"></canvas>
                                 <div id="customScrollTrack" style="position: absolute; top: 0; right: 0; width: 10px; height: 100%; background: #f1f1f1; border-radius: 5px; box-shadow: inset 0 0 2px rgba(0,0,0,0.1);">
                                     <div id="customScrollThumb" style="position: absolute; top: 0; left: 0; width: 100%; height: 50%; background: #c1c1c1; border-radius: 5px; cursor: grab; display: flex; flex-direction: column; justify-content: space-between; transition: background 0.2s;">
@@ -547,7 +553,7 @@ table.qs-table th {
                 <!-- Section 3: Product List Table -->
                 <div class="visual-card">
                     <div class="chart-header">
-                        <div class="chart-title">Product List</div>
+                        <div class="chart-title">My Store Product List</div>
                     </div>
                     <div class="table-scroll-container">
                         <table class="qs-table">
@@ -558,8 +564,8 @@ table.qs-table th {
                                     <th>Brand</th>
                                     <th>Full Price</th>
                                     <th>My Store Price</th>
-                                    <th>Discount</th>
-                                    <th>Price Type</th>
+                                    <th>My Store Discount</th>
+                                    <th>My Store Price Type</th>
                                     <th>Min Price</th>
                                     <th>Max Price</th>
                                     <th>Product Link</th>
@@ -611,7 +617,7 @@ table.qs-table th {
                 </div>
 
                 <div class="visual-card">
-                    <div class="section-divider">库存对比总览</div>
+                    <div class="section-divider">Inventory Comparison Overview</div>
                 </div>
 
                 <div class="row">
@@ -640,7 +646,7 @@ table.qs-table th {
                             <div class="chart-header">
                                 <div class="chart-title">In-Stock by Brand</div>
                             </div>
-                            <div style="position: relative; height: 400px; padding-right: 16px;" id="inventoryBrandChartWrapper">
+                            <div style="position: relative; height: 400px; padding-right: 15px;" id="inventoryBrandChartWrapper">
                                 <canvas id="inventoryBrandChart"></canvas>
                                 <div id="inventoryCustomScrollTrack" style="position: absolute; top: 0; right: 0; width: 10px; height: 100%; background: #f1f1f1; border-radius: 5px; box-shadow: inset 0 0 2px rgba(0,0,0,0.1);">
                                     <div id="inventoryCustomScrollThumb" style="position: absolute; top: 0; left: 0; width: 100%; height: 50%; background: #c1c1c1; border-radius: 5px; cursor: grab; display: flex; flex-direction: column; justify-content: space-between; transition: background 0.2s;">
@@ -658,22 +664,81 @@ table.qs-table th {
                 </div>
 
                 <div class="visual-card">
-                    <div class="section-divider">My Store没有库存的商品</div>
+                    <div class="section-divider">Overlapping Products</div>
                 </div>
 
                 <div class="row">
                     <div class="col" style="flex: 0 0 33.33%; max-width: 33.33%;">
                         <div class="visual-card">
                             <div class="chart-header">
-                                <div class="chart-title">Brand Out-of-Stock Summary</div>
+                                <div class="chart-title">Brand Overlap Summary</div>
                             </div>
                             <div class="table-scroll-container">
                                 <table class="qs-table">
                                     <thead>
                                         <tr>
                                             <th>Brand</th>
-                                            <th>在售Competitor Stores数量</th>
-                                            <th>在售商品数量</th>
+                                            <th>My Store In-Stock Count</th>
+                                            <th>Competitor Count</th>
+                                            <th>Total In-Stock Count</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="overlapBrandTableBody">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col" style="flex: 0 0 66.66%; max-width: 66.66%;">
+                        <div class="visual-card">
+                            <div class="chart-header">
+                                <div class="chart-title">Overlap Products</div>
+                            </div>
+                            <div class="table-scroll-container">
+                                <table class="qs-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Product Image</th>
+                                            <th>Product Name</th>
+                                            <th>Brand</th>
+                                            <th>Full Price</th>
+                                            <th>My Store Price</th>
+                                            <th>My Store Discount</th>
+                                            <th>My Store Price Type</th>
+                                            <th>Number of Competitor Stores</th>
+                                            <th>Min Price</th>
+                                            <th>Max Price</th>
+                                            <th>Product Link</th>
+                                            <th>Gender</th>
+                                            <th>Category</th>
+                                            <th>Sub Category</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="overlapProductTableBody">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="visual-card">
+                    <div class="section-divider">Products Not Carried by My Store</div>
+                </div>
+
+                <div class="row">
+                    <div class="col" style="flex: 0 0 33.33%; max-width: 33.33%;">
+                        <div class="visual-card">
+                            <div class="chart-header">
+                                <div class="chart-title">Brand Not Carried Summary</div>
+                            </div>
+                            <div class="table-scroll-container">
+                                <table class="qs-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Brand</th>
+                                            <th>Competitor Count</th>
+                                            <th>Competitor In-Stock Count</th>
                                         </tr>
                                     </thead>
                                     <tbody id="outOfStockBrandTableBody">
@@ -685,7 +750,7 @@ table.qs-table th {
                     <div class="col" style="flex: 0 0 66.66%; max-width: 66.66%;">
                         <div class="visual-card">
                             <div class="chart-header">
-                                <div class="chart-title">Out-of-Stock Products</div>
+                                <div class="chart-title">Not Carried Products</div>
                             </div>
                             <div class="table-scroll-container">
                                 <table class="qs-table">
@@ -694,7 +759,7 @@ table.qs-table th {
                                             <th>Product Image</th>
                                             <th>Product Name</th>
                                             <th>Brand</th>
-                                            <th>在售电商数</th>
+                                            <th>Number of Competitor Stores</th>
                                             <th>Full Price</th>
                                             <th>Min Price</th>
                                             <th>Max Price</th>
@@ -739,48 +804,100 @@ table.qs-table th {
             document.getElementById('controls-header-inventory').classList.toggle('collapsed');
         }
 
-        // 列宽调整功能
+        // Update Tab2 competitor stores text based on Comparison Scope
+        function updateTab2CompetitorText() {
+            const priceControls = document.getElementById('controls-grid-price');
+            const comparisonScopeSelect = Array.from(priceControls.querySelectorAll('.control-item')).find(item =>
+                item.querySelector('label')?.textContent === 'Comparison Scope'
+            )?.querySelector('select');
+
+            if (!comparisonScopeSelect) return;
+
+            const textBox = document.querySelector('#content-price .text-box');
+            if (!textBox) return;
+
+            const selectedValue = comparisonScopeSelect.value;
+            let storeText = '';
+
+            if (selectedValue.includes('Competitor')) {
+                storeText = 'Mytheresa, Moda Operandi, Neiman Marcus, SSENSE, Farfetch';
+            } else if (selectedValue.includes('All')) {
+                storeText = 'All Modesens Stores';
+            }
+
+            textBox.textContent = `My Competitor Stores: ${storeText}`;
+        }
+
+        // Column width adjustment functionality - adjust each column width independently
         function makeColumnsResizable() {
-            const table = document.querySelector('.qs-table');
-            if (!table) return;
+            const tables = document.querySelectorAll('.qs-table');
+            tables.forEach(table => {
+                const cols = table.querySelectorAll('th');
+                cols.forEach((col, index) => {
+                    const resizer = document.createElement('div');
+                    resizer.className = 'resizer';
+                    col.appendChild(resizer);
 
-            const cols = table.querySelectorAll('th');
-            cols.forEach((col, index) => {
-                const resizer = document.createElement('div');
-                resizer.className = 'resizer';
-                col.appendChild(resizer);
+                    let startX, startWidth;
+                    resizer.addEventListener('mousedown', e => {
+                        e.preventDefault();
+                        startX = e.pageX;
+                        startWidth = col.offsetWidth;
+                        document.addEventListener('mousemove', resize);
+                        document.addEventListener('mouseup', stopResize);
+                    });
 
-                let startX, startWidth;
-                resizer.addEventListener('mousedown', e => {
-                    e.preventDefault();
-                    startX = e.pageX;
-                    startWidth = col.offsetWidth;
-                    document.addEventListener('mousemove', resize);
-                    document.addEventListener('mouseup', stopResize);
+                    function resize(e) {
+                        const width = Math.max(60, startWidth + e.pageX - startX);
+                        col.style.width = width + 'px';
+                        col.style.minWidth = width + 'px';
+                        col.style.maxWidth = width + 'px';
+                        const cells = table.querySelectorAll(`tbody tr td:nth-child(${index + 1})`);
+                        cells.forEach(cell => {
+                            cell.style.width = width + 'px';
+                            cell.style.minWidth = width + 'px';
+                            cell.style.maxWidth = width + 'px';
+                        });
+                    }
+
+                    function stopResize() {
+                        document.removeEventListener('mousemove', resize);
+                        document.removeEventListener('mouseup', stopResize);
+                    }
                 });
-
-                function resize(e) {
-                    const width = startWidth + e.pageX - startX;
-                    col.style.width = width + 'px';
-                    col.style.minWidth = width + 'px';
-                    col.style.maxWidth = width + 'px';
-                }
-
-                function stopResize() {
-                    document.removeEventListener('mousemove', resize);
-                    document.removeEventListener('mouseup', stopResize);
-                }
             });
         }
 
-        // 生成30天日期
+        // Handle table data formatting - add thousand separators
+        function formatTableNumbers() {
+            const tables = document.querySelectorAll('.qs-table tbody');
+            tables.forEach(tbody => {
+                tbody.querySelectorAll('td').forEach(td => {
+                    const text = td.textContent.trim();
+                    // Match $number format
+                    if (/^\$[\d.]+$/.test(text)) {
+                        const match = text.match(/^\$(.+)$/);
+                        const num = match[1];
+                        const formatted = num.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                        td.textContent = '$' + formatted;
+                    }
+                    // Match pure number format
+                    else if (/^[\d.]+$/.test(text) && !text.includes('%')) {
+                        const formatted = text.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                        td.textContent = formatted;
+                    }
+                });
+            });
+        }
+
+        // Generate 30 days of dates
         const dates = Array.from({length: 30}, (_, i) => {
             const d = new Date();
             d.setDate(d.getDate() - 29 + i);
             return d.toISOString().split('T')[0];
         });
 
-        // Chart.js配置
+        // Chart.js configuration
         const cfg = {
             type: 'line',
             options: {
@@ -798,10 +915,70 @@ table.qs-table th {
             }
         };
 
+
+        // Format table numbers function
+        function formatTableNumbers() {
+            const tables = document.querySelectorAll('.qs-table');
+            tables.forEach(table => {
+                const cells = table.querySelectorAll('td');
+                cells.forEach(cell => {
+                    const text = cell.textContent.trim();
+                    // Check if pure number or $-prefixed number
+                    if (/^\$?\d+(\.\d+)?$/.test(text) && !text.includes(',')) {
+                        const isCurrency = text.startsWith('$');
+                        const numberStr = isCurrency ? text.substring(1) : text;
+                        const number = parseFloat(numberStr);
+                        if (!isNaN(number)) {
+                            const formattedNumber = number.toLocaleString('en-US');
+                            cell.textContent = isCurrency ? '$' + formattedNumber : formattedNumber;
+                        }
+                    }
+                });
+            });
+        }
+
+        // Update competitor stores label based on comparison type
+        function updateCompetitorLabel() {
+            const comparisonSelect = document.querySelector('.control-item select[value*="Compare"]')?.parentElement.querySelector('select') ||
+                                     Array.from(document.querySelectorAll('.control-item select')).find(s => s.options[0].text.includes('Compare'));
+            if (!comparisonSelect) return;
+
+            const selectedValue = comparisonSelect.value;
+            const textBox = document.querySelector('#content-sales .text-box');
+            if (!textBox) return;
+
+            let suffix = '';
+            if (selectedValue.includes('Avg')) suffix = '(Avg)';
+            else if (selectedValue.includes('Min')) suffix = '(Min)';
+            else if (selectedValue.includes('Max')) suffix = '(Max)';
+
+            textBox.textContent = `My Competitor Stores: Mytheresa, Moda Operandi, Neiman Marcus, SSENSE, Farfetch${suffix ? ' - Competitor Stores' + suffix : ''}`;
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             makeColumnsResizable();
+            // Format static table numbers
+            formatTableNumbers();
 
-            // 产品数据
+            // Add change listener to Comparison Type select
+            const comparisonSelects = document.querySelectorAll('#content-sales .control-item select');
+            comparisonSelects.forEach((select, idx) => {
+                if (idx === 6) { // Comparison Type is the 7th control (0-indexed)
+                    select.addEventListener('change', updateCompetitorLabel);
+                }
+            });
+
+            // Add change listener to Tab2 Comparison Scope select
+            const priceControls = document.getElementById('controls-grid-price');
+            const comparisonScopeSelect = Array.from(priceControls.querySelectorAll('.control-item')).find(item =>
+                item.querySelector('label')?.textContent === 'Comparison Scope'
+            )?.querySelector('select');
+            if (comparisonScopeSelect) {
+                comparisonScopeSelect.addEventListener('change', updateTab2CompetitorText);
+                updateTab2CompetitorText(); // Initialize on load
+            }
+
+            // Product data
             const productData = [
                 { img: '/assets/100*100.svg', name: 'Classic Leather Handbag', brand: 'Gucci', fullPrice: 2800, myPrice: 2240, discount: '20%', priceType: 'Highest', minPrice: 1950, maxPrice: 3200, gender: 'Female', category: 'Bag', subCategory: 'Handbag' },
                 { img: '/assets/100*100.svg', name: 'Silk Evening Dress', brand: 'Prada', fullPrice: 3500, myPrice: 2625, discount: '25%', priceType: 'Average', minPrice: 2800, maxPrice: 4200, gender: 'Female', category: 'Clothing', subCategory: 'Dress' },
@@ -834,7 +1011,7 @@ table.qs-table th {
                 { img: '/assets/100*100.svg', name: 'Serum', brand: 'Rick Owens', fullPrice: 150, myPrice: 112, discount: '25%', priceType: 'Average', minPrice: 130, maxPrice: 190, gender: 'Female', category: 'Beauty', subCategory: 'Skincare' }
             ];
 
-            // 生成产品表格
+            // Generate product table
             const tbody = document.getElementById('productTableBody');
             productData.forEach(p => {
                 const row = tbody.insertRow();
@@ -862,7 +1039,7 @@ table.qs-table th {
                 return magnitude * 2;
             };
 
-            // Category数据
+            // Category data
             const categoryData = [
                 { name: 'Clothing', highest: 145, average: 680, lowest: 85 },
                 { name: 'Shoes', highest: 132, average: 565, lowest: 72 },
@@ -896,7 +1073,7 @@ table.qs-table th {
                 }
             });
 
-            // Brand数据 (Top 20)
+            // Brand data (Top 20)
             const brandData = [
                 { name: 'Gucci', highest: 89, average: 245, lowest: 32 },
                 { name: 'Prada', highest: 82, average: 238, lowest: 28 },
@@ -1036,7 +1213,7 @@ table.qs-table th {
                 options: { ...cfg.options, scales: { y: { beginAtZero: false, ticks: { callback: v => v.toFixed(1) + '%' } } } }
             });
 
-            // Brand图表滚动条交互逻辑
+            // Brand chart scroll bar interaction logic
             const track = document.getElementById('customScrollTrack');
             const thumb = document.getElementById('customScrollThumb');
             const topHandle = document.getElementById('customScrollTopHandle');
@@ -1151,8 +1328,8 @@ table.qs-table th {
                 data: {
                     labels: inventoryGenderData.map(d => d.name),
                     datasets: [
-                        { label: 'Competitor Stores', data: inventoryGenderData.map(d => d.competitors), backgroundColor: '#0073bb' },
-                        { label: 'My Store', data: inventoryGenderData.map(d => d.myStore), backgroundColor: '#ff9900' }
+                        { label: 'Competitor Stores', data: inventoryGenderData.map(d => d.competitors), backgroundColor: '#3b8ea5' },
+                        { label: 'My Store', data: inventoryGenderData.map(d => d.myStore), backgroundColor: '#f49e4c' }
                     ]
                 },
                 options: {
@@ -1177,8 +1354,8 @@ table.qs-table th {
                 data: {
                     labels: inventoryCategoryData.map(d => d.name),
                     datasets: [
-                        { label: 'Competitor Stores', data: inventoryCategoryData.map(d => d.competitors), backgroundColor: '#0073bb' },
-                        { label: 'My Store', data: inventoryCategoryData.map(d => d.myStore), backgroundColor: '#ff9900' }
+                        { label: 'Competitor Stores', data: inventoryCategoryData.map(d => d.competitors), backgroundColor: '#3b8ea5' },
+                        { label: 'My Store', data: inventoryCategoryData.map(d => d.myStore), backgroundColor: '#f49e4c' }
                     ]
                 },
                 options: {
@@ -1228,8 +1405,8 @@ table.qs-table th {
                 data: {
                     labels: inventoryBrandData.map(d => d.name),
                     datasets: [
-                        { label: 'Competitor Stores', data: inventoryBrandData.map(d => d.competitors), backgroundColor: '#0073bb' },
-                        { label: 'My Store', data: inventoryBrandData.map(d => d.myStore), backgroundColor: '#ff9900' }
+                        { label: 'Competitor Stores', data: inventoryBrandData.map(d => d.competitors), backgroundColor: '#3b8ea5' },
+                        { label: 'My Store', data: inventoryBrandData.map(d => d.myStore), backgroundColor: '#f49e4c' }
                     ]
                 },
                 options: {
@@ -1241,7 +1418,7 @@ table.qs-table th {
                 }
             });
 
-            // Inventory Brand滚动条
+            // Inventory Brand scroll bar
             const invTrack = document.getElementById('inventoryCustomScrollTrack');
             const invThumb = document.getElementById('inventoryCustomScrollThumb');
             const invTopHandle = document.getElementById('inventoryCustomScrollTopHandle');
@@ -1339,32 +1516,32 @@ table.qs-table th {
 
             // Generate out-of-stock brand data (30 rows, sorted by product count descending)
             const outOfStockBrandData = [
-                { brand: 'Hermès', competitors: 45, products: 892 },
-                { brand: 'Chanel', competitors: 42, products: 856 },
-                { brand: 'Louis Vuitton', competitors: 40, products: 823 },
-                { brand: 'Gucci', competitors: 38, products: 798 },
-                { brand: 'Prada', competitors: 36, products: 765 },
-                { brand: 'Dior', competitors: 34, products: 742 },
-                { brand: 'Valentino', competitors: 32, products: 698 },
-                { brand: 'Balenciaga', competitors: 30, products: 675 },
-                { brand: 'Saint Laurent', competitors: 28, products: 652 },
-                { brand: 'Burberry', competitors: 26, products: 628 },
-                { brand: 'Fendi', competitors: 24, products: 605 },
-                { brand: 'Givenchy', competitors: 22, products: 582 },
-                { brand: 'Celine', competitors: 20, products: 558 },
-                { brand: 'Loewe', competitors: 18, products: 535 },
-                { brand: 'Alexander McQueen', competitors: 16, products: 512 },
-                { brand: 'Versace', competitors: 14, products: 488 },
-                { brand: 'Dolce & Gabbana', competitors: 12, products: 465 },
-                { brand: 'Miu Miu', competitors: 10, products: 442 },
-                { brand: 'Off-White', competitors: 8, products: 418 },
-                { brand: 'Bottega Veneta', competitors: 7, products: 395 },
-                { brand: 'Kenzo', competitors: 6, products: 372 },
-                { brand: 'Balmain', competitors: 5, products: 348 },
-                { brand: 'Lanvin', competitors: 4, products: 325 },
-                { brand: 'Maison Margiela', competitors: 3, products: 302 },
-                { brand: 'Thom Browne', competitors: 2, products: 278 },
-                { brand: 'Issey Miyake', competitors: 2, products: 255 },
+                { brand: 'Hermès', competitors: 5, products: 892 },
+                { brand: 'Chanel', competitors: 5, products: 856 },
+                { brand: 'Louis Vuitton', competitors: 4, products: 823 },
+                { brand: 'Gucci', competitors: 4, products: 798 },
+                { brand: 'Prada', competitors: 4, products: 765 },
+                { brand: 'Dior', competitors: 3, products: 742 },
+                { brand: 'Valentino', competitors: 3, products: 698 },
+                { brand: 'Balenciaga', competitors: 3, products: 675 },
+                { brand: 'Saint Laurent', competitors: 3, products: 652 },
+                { brand: 'Burberry', competitors: 2, products: 628 },
+                { brand: 'Fendi', competitors: 2, products: 605 },
+                { brand: 'Givenchy', competitors: 2, products: 582 },
+                { brand: 'Celine', competitors: 2, products: 558 },
+                { brand: 'Loewe', competitors: 2, products: 535 },
+                { brand: 'Alexander McQueen', competitors: 1, products: 512 },
+                { brand: 'Versace', competitors: 1, products: 488 },
+                { brand: 'Dolce & Gabbana', competitors: 1, products: 465 },
+                { brand: 'Miu Miu', competitors: 1, products: 442 },
+                { brand: 'Off-White', competitors: 1, products: 418 },
+                { brand: 'Bottega Veneta', competitors: 1, products: 395 },
+                { brand: 'Kenzo', competitors: 1, products: 372 },
+                { brand: 'Balmain', competitors: 1, products: 348 },
+                { brand: 'Lanvin', competitors: 1, products: 325 },
+                { brand: 'Maison Margiela', competitors: 1, products: 302 },
+                { brand: 'Thom Browne', competitors: 1, products: 278 },
+                { brand: 'Issey Miyake', competitors: 1, products: 255 },
                 { brand: 'Jil Sander', competitors: 1, products: 232 },
                 { brand: 'Haider Ackermann', competitors: 1, products: 208 },
                 { brand: 'Rick Owens', competitors: 1, products: 185 },
@@ -1425,6 +1602,101 @@ table.qs-table th {
                     <td>$${p.minPrice}</td>
                     <td>$${p.maxPrice}</td>
                     <td><a href="${p.link}" target="_blank" style="color: #0073bb; text-decoration: none;">Link</a></td>
+                    <td>${p.gender}</td>
+                    <td>${p.category}</td>
+                    <td>${p.subCategory}</td>
+                `;
+            });
+
+            // Overlap Brand data (30 rows, sorted by My Store products descending)
+            const overlapBrandData = [
+                { brand: 'Hermès', myStore: 245, competitors: 5, total: 892 },
+                { brand: 'Chanel', competitors: 5, myStore: 235, total: 856 },
+                { brand: 'Louis Vuitton', competitors: 4, myStore: 225, total: 823 },
+                { brand: 'Gucci', competitors: 4, myStore: 215, total: 798 },
+                { brand: 'Prada', competitors: 4, myStore: 205, total: 765 },
+                { brand: 'Dior', competitors: 3, myStore: 195, total: 742 },
+                { brand: 'Valentino', competitors: 3, myStore: 185, total: 698 },
+                { brand: 'Balenciaga', competitors: 3, myStore: 175, total: 675 },
+                { brand: 'Saint Laurent', competitors: 3, myStore: 165, total: 652 },
+                { brand: 'Burberry', competitors: 2, myStore: 155, total: 628 },
+                { brand: 'Fendi', competitors: 2, myStore: 145, total: 605 },
+                { brand: 'Givenchy', competitors: 2, myStore: 135, total: 582 },
+                { brand: 'Celine', competitors: 2, myStore: 125, total: 558 },
+                { brand: 'Loewe', competitors: 2, myStore: 115, total: 535 },
+                { brand: 'Alexander McQueen', competitors: 1, myStore: 105, total: 512 },
+                { brand: 'Versace', competitors: 1, myStore: 95, total: 488 },
+                { brand: 'Dolce & Gabbana', competitors: 1, myStore: 85, total: 465 },
+                { brand: 'Miu Miu', competitors: 1, myStore: 75, total: 442 },
+                { brand: 'Off-White', competitors: 1, myStore: 65, total: 418 },
+                { brand: 'Bottega Veneta', competitors: 1, myStore: 55, total: 395 },
+                { brand: 'Kenzo', competitors: 1, myStore: 45, total: 372 },
+                { brand: 'Balmain', competitors: 1, myStore: 35, total: 348 },
+                { brand: 'Lanvin', competitors: 1, myStore: 25, total: 325 },
+                { brand: 'Maison Margiela', competitors: 1, myStore: 15, total: 302 },
+                { brand: 'Thom Browne', competitors: 1, myStore: 12, total: 278 },
+                { brand: 'Issey Miyake', competitors: 1, myStore: 10, total: 255 },
+                { brand: 'Jil Sander', competitors: 1, myStore: 8, total: 232 },
+                { brand: 'Haider Ackermann', competitors: 1, myStore: 6, total: 208 },
+                { brand: 'Rick Owens', competitors: 1, myStore: 4, total: 185 },
+                { brand: 'Comme des Garçons', competitors: 1, myStore: 2, total: 162 }
+            ].sort((a, b) => b.myStore - a.myStore);
+
+            const overlapBrandBody = document.getElementById('overlapBrandTableBody');
+            overlapBrandData.forEach(row => {
+                const tr = overlapBrandBody.insertRow();
+                tr.innerHTML = `<td>${row.brand}</td><td>${row.myStore}</td><td>${row.competitors}</td><td>${row.total}</td>`;
+            });
+
+            // Overlap Product data (30 rows, sorted by stores descending)
+            const overlapProductData = [
+                { img: '/assets/100*100.svg', name: 'Classic Leather Handbag', brand: 'Gucci', fullPrice: 2800, myPrice: 2240, discount: '20%', priceType: 'Highest', stores: 8, minPrice: 1950, maxPrice: 3200, gender: 'Female', category: 'Bag', subCategory: 'Handbag' },
+                { img: '/assets/100*100.svg', name: 'Silk Evening Dress', brand: 'Prada', fullPrice: 3500, myPrice: 2625, discount: '25%', priceType: 'Average', stores: 7, minPrice: 2800, maxPrice: 4200, gender: 'Female', category: 'Clothing', subCategory: 'Dress' },
+                { img: '/assets/100*100.svg', name: 'Designer Sneakers', brand: 'Chanel', fullPrice: 1200, myPrice: 960, discount: '20%', priceType: 'Lowest', stores: 7, minPrice: 850, maxPrice: 1500, gender: 'Unisex', category: 'Shoes', subCategory: 'Sneaker' },
+                { img: '/assets/100*100.svg', name: 'Luxury Watch', brand: 'Dior', fullPrice: 5000, myPrice: 4000, discount: '20%', priceType: 'Highest', stores: 6, minPrice: 3500, maxPrice: 6000, gender: 'Unisex', category: 'Accessories', subCategory: 'Watch' },
+                { img: '/assets/100*100.svg', name: 'Premium Sunglasses', brand: 'Louis Vuitton', fullPrice: 450, myPrice: 337, discount: '25%', priceType: 'Average', stores: 6, minPrice: 380, maxPrice: 550, gender: 'Unisex', category: 'Accessories', subCategory: 'Eyewear' },
+                { img: '/assets/100*100.svg', name: 'Cashmere Sweater', brand: 'Hermès', fullPrice: 1800, myPrice: 1440, discount: '20%', priceType: 'Lowest', stores: 6, minPrice: 1200, maxPrice: 2100, gender: 'Female', category: 'Clothing', subCategory: 'Sweater' },
+                { img: '/assets/100*100.svg', name: 'Wool Coat', brand: 'Balenciaga', fullPrice: 2200, myPrice: 1650, discount: '25%', priceType: 'Highest', stores: 5, minPrice: 1800, maxPrice: 2800, gender: 'Female', category: 'Clothing', subCategory: 'Coat' },
+                { img: '/assets/100*100.svg', name: 'Crossbody Bag', brand: 'Saint Laurent', fullPrice: 1950, myPrice: 1462, discount: '25%', priceType: 'Average', stores: 5, minPrice: 1600, maxPrice: 2400, gender: 'Female', category: 'Bag', subCategory: 'Crossbody' },
+                { img: '/assets/100*100.svg', name: 'High Heels', brand: 'Valentino', fullPrice: 1100, myPrice: 880, discount: '20%', priceType: 'Lowest', stores: 5, minPrice: 750, maxPrice: 1400, gender: 'Female', category: 'Shoes', subCategory: 'Heels' },
+                { img: '/assets/100*100.svg', name: 'Leather Belt', brand: 'Bottega Veneta', fullPrice: 650, myPrice: 487, discount: '25%', priceType: 'Highest', stores: 5, minPrice: 550, maxPrice: 800, gender: 'Unisex', category: 'Accessories', subCategory: 'Belt' },
+                { img: '/assets/100*100.svg', name: 'Perfume 100ml', brand: 'Fendi', fullPrice: 280, myPrice: 210, discount: '25%', priceType: 'Average', stores: 4, minPrice: 220, maxPrice: 350, gender: 'Female', category: 'Beauty', subCategory: 'Fragrance' },
+                { img: '/assets/100*100.svg', name: 'Silk Scarf', brand: 'Givenchy', fullPrice: 380, myPrice: 285, discount: '25%', priceType: 'Lowest', stores: 4, minPrice: 300, maxPrice: 480, gender: 'Female', category: 'Accessories', subCategory: 'Scarf' },
+                { img: '/assets/100*100.svg', name: 'Denim Jeans', brand: 'Burberry', fullPrice: 850, myPrice: 637, discount: '25%', priceType: 'Highest', stores: 4, minPrice: 700, maxPrice: 1050, gender: 'Unisex', category: 'Clothing', subCategory: 'Jeans' },
+                { img: '/assets/100*100.svg', name: 'Tote Bag', brand: 'Celine', fullPrice: 1600, myPrice: 1200, discount: '25%', priceType: 'Average', stores: 4, minPrice: 1300, maxPrice: 1900, gender: 'Female', category: 'Bag', subCategory: 'Tote' },
+                { img: '/assets/100*100.svg', name: 'Loafers', brand: 'Loewe', fullPrice: 950, myPrice: 712, discount: '25%', priceType: 'Lowest', stores: 3, minPrice: 800, maxPrice: 1200, gender: 'Male', category: 'Shoes', subCategory: 'Loafers' },
+                { img: '/assets/100*100.svg', name: 'Bracelet', brand: 'Alexander McQueen', fullPrice: 520, myPrice: 390, discount: '25%', priceType: 'Highest', stores: 3, minPrice: 450, maxPrice: 650, gender: 'Female', category: 'Accessories', subCategory: 'Bracelet' },
+                { img: '/assets/100*100.svg', name: 'Lipstick Set', brand: 'Versace', fullPrice: 180, myPrice: 135, discount: '25%', priceType: 'Average', stores: 3, minPrice: 150, maxPrice: 220, gender: 'Female', category: 'Beauty', subCategory: 'Makeup' },
+                { img: '/assets/100*100.svg', name: 'Polo Shirt', brand: 'Dolce & Gabbana', fullPrice: 620, myPrice: 465, discount: '25%', priceType: 'Lowest', stores: 3, minPrice: 500, maxPrice: 750, gender: 'Male', category: 'Clothing', subCategory: 'Shirt' },
+                { img: '/assets/100*100.svg', name: 'Blazer', brand: 'Miu Miu', fullPrice: 1400, myPrice: 1050, discount: '25%', priceType: 'Highest', stores: 2, minPrice: 1200, maxPrice: 1700, gender: 'Female', category: 'Clothing', subCategory: 'Blazer' },
+                { img: '/assets/100*100.svg', name: 'Clutch', brand: 'Off-White', fullPrice: 890, myPrice: 667, discount: '25%', priceType: 'Average', stores: 2, minPrice: 750, maxPrice: 1100, gender: 'Female', category: 'Bag', subCategory: 'Clutch' },
+                { img: '/assets/100*100.svg', name: 'Boots', brand: 'Kenzo', fullPrice: 1300, myPrice: 975, discount: '25%', priceType: 'Lowest', stores: 2, minPrice: 1100, maxPrice: 1600, gender: 'Female', category: 'Shoes', subCategory: 'Boots' },
+                { img: '/assets/100*100.svg', name: 'Necklace', brand: 'Balmain', fullPrice: 780, myPrice: 585, discount: '25%', priceType: 'Highest', stores: 2, minPrice: 650, maxPrice: 950, gender: 'Female', category: 'Accessories', subCategory: 'Necklace' },
+                { img: '/assets/100*100.svg', name: 'Face Cream', brand: 'Lanvin', fullPrice: 220, myPrice: 165, discount: '25%', priceType: 'Average', stores: 2, minPrice: 180, maxPrice: 280, gender: 'Female', category: 'Beauty', subCategory: 'Skincare' },
+                { img: '/assets/100*100.svg', name: 'T-Shirt', brand: 'Maison Margiela', fullPrice: 480, myPrice: 360, discount: '25%', priceType: 'Lowest', stores: 1, minPrice: 400, maxPrice: 600, gender: 'Unisex', category: 'Clothing', subCategory: 'T-Shirt' },
+                { img: '/assets/100*100.svg', name: 'Shorts', brand: 'Thom Browne', fullPrice: 550, myPrice: 412, discount: '25%', priceType: 'Highest', stores: 1, minPrice: 480, maxPrice: 680, gender: 'Male', category: 'Clothing', subCategory: 'Shorts' },
+                { img: '/assets/100*100.svg', name: 'Backpack', brand: 'Issey Miyake', fullPrice: 1100, myPrice: 825, discount: '25%', priceType: 'Average', stores: 1, minPrice: 950, maxPrice: 1350, gender: 'Unisex', category: 'Bag', subCategory: 'Backpack' },
+                { img: '/assets/100*100.svg', name: 'Sandals', brand: 'Jil Sander', fullPrice: 680, myPrice: 510, discount: '25%', priceType: 'Lowest', stores: 1, minPrice: 580, maxPrice: 850, gender: 'Unisex', category: 'Shoes', subCategory: 'Sandals' },
+                { img: '/assets/100*100.svg', name: 'Ring', brand: 'Haider Ackermann', fullPrice: 420, myPrice: 315, discount: '25%', priceType: 'Highest', stores: 1, minPrice: 350, maxPrice: 520, gender: 'Female', category: 'Accessories', subCategory: 'Ring' },
+                { img: '/assets/100*100.svg', name: 'Serum', brand: 'Rick Owens', fullPrice: 150, myPrice: 112, discount: '25%', priceType: 'Average', stores: 1, minPrice: 130, maxPrice: 190, gender: 'Female', category: 'Beauty', subCategory: 'Skincare' },
+                { img: '/assets/100*100.svg', name: 'Structured Bag', brand: 'Comme des Garçons', fullPrice: 1700, myPrice: 1275, discount: '25%', priceType: 'Lowest', stores: 1, minPrice: 1400, maxPrice: 2100, gender: 'Female', category: 'Bag', subCategory: 'Shoulder' }
+            ].sort((a, b) => b.stores - a.stores);
+
+            const overlapProductBody = document.getElementById('overlapProductTableBody');
+            overlapProductData.forEach(p => {
+                const tr = overlapProductBody.insertRow();
+                tr.innerHTML = `
+                    <td><img src="${p.img}" class="qs-product-img" onerror="this.parentElement.innerHTML='<div class=qs-img-placeholder>N/A</div>'"></td>
+                    <td>${p.name}</td>
+                    <td>${p.brand}</td>
+                    <td>$${p.fullPrice}</td>
+                    <td>$${p.myPrice}</td>
+                    <td>${p.discount}</td>
+                    <td>${p.priceType}</td>
+                    <td>${p.stores}</td>
+                    <td>$${p.minPrice}</td>
+                    <td>$${p.maxPrice}</td>
+                    <td><a href="https://www.modesens.com" target="_blank" style="color: #0073bb; text-decoration: none;">Link</a></td>
                     <td>${p.gender}</td>
                     <td>${p.category}</td>
                     <td>${p.subCategory}</td>

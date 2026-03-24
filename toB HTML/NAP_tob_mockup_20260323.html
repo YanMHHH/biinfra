@@ -36,7 +36,6 @@
         .page-container {
             margin: 0 10%;
             background-color: var(--qs-bg);
-            min-height: 100vh;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
@@ -110,8 +109,6 @@
 
         /* 限制表格最高 400px，超出滚动 */
         .table-scroll-container {
-            max-height: 400px; /* 需求3: 指定最高高度为400px */
-            overflow: auto;    /* 需求2 & 3: 自动出现上下、左右滚动条 */
             border: 1px solid var(--qs-border-dark); /* 外层边框，防止滚动时边框丢失 */
         }
 

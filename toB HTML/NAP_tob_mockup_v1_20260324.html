@@ -543,9 +543,84 @@ table.qs-table th {
         </div>
 
         <div id="content-inventory" class="tab-content">
+            <div class="controls-section">
+                <div class="controls-header" id="controls-header-inventory" onclick="toggleControlsInventory()">
+                    <span>Controls</span> <span id="controls-icon-inventory">&#708;</span>
+                </div>
+                <div class="controls-grid" id="controls-grid-inventory">
+                    <div class="control-item">
+                        <label>Country</label>
+                        <select><option>US</option><option>CA</option><option>AU</option><option>CN</option></select>
+                    </div>
+                    <div class="control-item">
+                        <label>Category</label>
+                        <select><option>All</option><option>Clothing</option><option>Shoes</option><option>Bag</option><option>Home</option><option>Beauty</option></select>
+                    </div>
+                    <div class="control-item">
+                        <label>Gender</label>
+                        <select><option>All</option><option>Female</option><option>Male</option><option>Unisex</option><option>Kids</option></select>
+                    </div>
+                    <div class="control-item">
+                        <label>Conditions</label>
+                        <select><option>All</option><option>New</option><option>Pre-owned</option></select>
+                    </div>
+                    <div class="control-item">
+                        <label>Brand</label>
+                        <select><option>All</option><option>GUCCI</option><option>PRADA</option><option>Belenciaga</option><option>Valentino</option><option>Burberry</option><option>Chanel</option><option>Dior</option><option>Louis Vuitton</option><option>Hermès</option></select>
+                    </div>
+                </div>
+            </div>
+
             <div class="main-content">
-                <div class="visual-card text-box" style="text-align: center; color: var(--qs-text-muted); padding: 50px;">
-                    库存分析内容待补充
+                <div class="visual-card">
+                    <div class="text-box">My Competitor Stores: Mytheresa, Moda Operandi, Neiman Marcus, SSENSE, Farfetch</div>
+                </div>
+
+                <div class="visual-card">
+                    <div class="section-divider">库存对比总览</div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="visual-card">
+                            <div class="chart-header">
+                                <div class="chart-title">In-Stock by Gender</div>
+                            </div>
+                            <div style="height: 400px;">
+                                <canvas id="inventoryGenderChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="visual-card">
+                            <div class="chart-header">
+                                <div class="chart-title">In-Stock by Category</div>
+                            </div>
+                            <div style="height: 400px;">
+                                <canvas id="inventoryCategoryChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="visual-card">
+                            <div class="chart-header">
+                                <div class="chart-title">In-Stock by Brand</div>
+                            </div>
+                            <div style="position: relative; height: 400px; padding-right: 16px;" id="inventoryBrandChartWrapper">
+                                <canvas id="inventoryBrandChart"></canvas>
+                                <div id="inventoryCustomScrollTrack" style="position: absolute; top: 0; right: 0; width: 10px; height: 100%; background: #f1f1f1; border-radius: 5px; box-shadow: inset 0 0 2px rgba(0,0,0,0.1);">
+                                    <div id="inventoryCustomScrollThumb" style="position: absolute; top: 0; left: 0; width: 100%; height: 50%; background: #c1c1c1; border-radius: 5px; cursor: grab; display: flex; flex-direction: column; justify-content: space-between; transition: background 0.2s;">
+                                        <div id="inventoryCustomScrollTopHandle" style="height: 8px; width: 100%; cursor: ns-resize; display: flex; justify-content: center; align-items: center;">
+                                            <div style="width: 6px; height: 2px; background: #fff; border-radius: 1px;"></div>
+                                        </div>
+                                        <div id="inventoryCustomScrollBottomHandle" style="height: 8px; width: 100%; cursor: ns-resize; display: flex; justify-content: center; align-items: center;">
+                                            <div style="width: 6px; height: 2px; background: #fff; border-radius: 1px;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -568,6 +643,11 @@ table.qs-table th {
             document.getElementById('controls-grid-price').classList.toggle('collapsed');
             document.getElementById('controls-icon-price').classList.toggle('collapsed');
             document.getElementById('controls-header-price').classList.toggle('collapsed');
+        }
+        function toggleControlsInventory() {
+            document.getElementById('controls-grid-inventory').classList.toggle('collapsed');
+            document.getElementById('controls-icon-inventory').classList.toggle('collapsed');
+            document.getElementById('controls-header-inventory').classList.toggle('collapsed');
         }
 
         // 列宽调整功能
@@ -913,6 +993,206 @@ table.qs-table th {
                         viewStart += shift;
                         viewEnd += shift;
                         updateChartAndView();
+                    }
+                });
+            }
+
+            // Inventory Charts
+            const inventoryGenderData = [
+                { name: 'Female', myStore: 450, competitors: 520 },
+                { name: 'Unisex', myStore: 280, competitors: 350 },
+                { name: 'Male', myStore: 380, competitors: 420 },
+                { name: 'Kids', myStore: 135, competitors: 180 }
+            ].sort((a, b) => (b.myStore + b.competitors) - (a.myStore + a.competitors));
+
+            new Chart(document.getElementById('inventoryGenderChart'), {
+                type: 'bar',
+                data: {
+                    labels: inventoryGenderData.map(d => d.name),
+                    datasets: [
+                        { label: 'Competitor Stores', data: inventoryGenderData.map(d => d.competitors), backgroundColor: '#0073bb' },
+                        { label: 'My Store', data: inventoryGenderData.map(d => d.myStore), backgroundColor: '#ff9900' }
+                    ]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 }}}},
+                    scales: { x: { stacked: true, beginAtZero: true }, y: { stacked: true } }
+                }
+            });
+
+            const inventoryCategoryData = [
+                { name: 'Clothing', myStore: 580, competitors: 650 },
+                { name: 'Shoes', myStore: 420, competitors: 480 },
+                { name: 'Bag', myStore: 350, competitors: 420 },
+                { name: 'Beauty', myStore: 180, competitors: 220 },
+                { name: 'Home', myStore: 120, competitors: 150 }
+            ].sort((a, b) => (b.myStore + b.competitors) - (a.myStore + a.competitors));
+
+            new Chart(document.getElementById('inventoryCategoryChart'), {
+                type: 'bar',
+                data: {
+                    labels: inventoryCategoryData.map(d => d.name),
+                    datasets: [
+                        { label: 'Competitor Stores', data: inventoryCategoryData.map(d => d.competitors), backgroundColor: '#0073bb' },
+                        { label: 'My Store', data: inventoryCategoryData.map(d => d.myStore), backgroundColor: '#ff9900' }
+                    ]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 }}}},
+                    scales: { x: { stacked: true, beginAtZero: true }, y: { stacked: true } }
+                }
+            });
+
+            const inventoryBrandData = [
+                { name: 'Hermès', myStore: 112, competitors: 140 },
+                { name: 'Chanel', myStore: 102, competitors: 130 },
+                { name: 'Louis Vuitton', myStore: 98, competitors: 125 },
+                { name: 'Gucci', myStore: 95, competitors: 120 },
+                { name: 'Prada', myStore: 88, competitors: 110 },
+                { name: 'Dior', myStore: 85, competitors: 105 },
+                { name: 'Valentino', myStore: 80, competitors: 100 },
+                { name: 'Balenciaga', myStore: 78, competitors: 95 },
+                { name: 'Saint Laurent', myStore: 72, competitors: 88 },
+                { name: 'Burberry', myStore: 65, competitors: 82 },
+                { name: 'Fendi', myStore: 62, competitors: 78 },
+                { name: 'Givenchy', myStore: 58, competitors: 72 },
+                { name: 'Celine', myStore: 55, competitors: 68 },
+                { name: 'Loewe', myStore: 52, competitors: 65 },
+                { name: 'Alexander McQueen', myStore: 48, competitors: 60 },
+                { name: 'Versace', myStore: 45, competitors: 56 },
+                { name: 'Dolce & Gabbana', myStore: 42, competitors: 52 },
+                { name: 'Miu Miu', myStore: 38, competitors: 48 },
+                { name: 'Off-White', myStore: 35, competitors: 44 },
+                { name: 'Bottega Veneta', myStore: 70, competitors: 85 },
+                { name: 'Saint Laurent Paris', myStore: 68, competitors: 82 },
+                { name: 'Kenzo', myStore: 40, competitors: 50 },
+                { name: 'Balmain', myStore: 38, competitors: 48 },
+                { name: 'Lanvin', myStore: 35, competitors: 44 },
+                { name: 'Maison Margiela', myStore: 32, competitors: 40 },
+                { name: 'Thom Browne', myStore: 30, competitors: 38 },
+                { name: 'Issey Miyake', myStore: 28, competitors: 35 },
+                { name: 'Jil Sander', myStore: 25, competitors: 32 },
+                { name: 'Haider Ackermann', myStore: 22, competitors: 28 },
+                { name: 'Rick Owens', myStore: 20, competitors: 25 }
+            ].sort((a, b) => (b.myStore + b.competitors) - (a.myStore + a.competitors));
+
+            new Chart(document.getElementById('inventoryBrandChart'), {
+                type: 'bar',
+                data: {
+                    labels: inventoryBrandData.map(d => d.name),
+                    datasets: [
+                        { label: 'Competitor Stores', data: inventoryBrandData.map(d => d.competitors), backgroundColor: '#0073bb' },
+                        { label: 'My Store', data: inventoryBrandData.map(d => d.myStore), backgroundColor: '#ff9900' }
+                    ]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 }}}},
+                    scales: { x: { stacked: true, beginAtZero: true }, y: { stacked: true } }
+                }
+            });
+
+            // Inventory Brand滚动条
+            const invTrack = document.getElementById('inventoryCustomScrollTrack');
+            const invThumb = document.getElementById('inventoryCustomScrollThumb');
+            const invTopHandle = document.getElementById('inventoryCustomScrollTopHandle');
+            const invBottomHandle = document.getElementById('inventoryCustomScrollBottomHandle');
+            const invWrapper = document.getElementById('inventoryBrandChartWrapper');
+
+            if (invTrack && invThumb && invTopHandle && invBottomHandle) {
+                let invTotalItems = 30;
+                let invViewStart = 0;
+                let invViewEnd = 9;
+                let invIsDragging = false;
+                let invDragType = '';
+                let invStartY = 0;
+                let invInitialStart = 0;
+                let invInitialEnd = 0;
+                let invChartInstance = Chart.instances.find(c => c.canvas && c.canvas.id === 'inventoryBrandChart');
+
+                function updateInvChartAndView() {
+                    if (!invChartInstance) return;
+                    if (invViewStart < 0) invViewStart = 0;
+                    if (invViewEnd >= invTotalItems) invViewEnd = invTotalItems - 1;
+                    if (invViewStart > invViewEnd - 1) invViewStart = invViewEnd - 1;
+
+                    invChartInstance.options.scales.y.min = invViewStart;
+                    invChartInstance.options.scales.y.max = invViewEnd;
+                    invChartInstance.update();
+
+                    const trackHeight = invTrack.clientHeight;
+                    const thumbTop = (invViewStart / invTotalItems) * trackHeight;
+                    const thumbHeight = ((invViewEnd - invViewStart + 1) / invTotalItems) * trackHeight;
+
+                    invThumb.style.top = `${thumbTop}px`;
+                    invThumb.style.height = `${thumbHeight}px`;
+                }
+
+                updateInvChartAndView();
+
+                function onInvMouseDown(e, type) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    invIsDragging = true;
+                    invDragType = type;
+                    invStartY = e.clientY;
+                    invInitialStart = invViewStart;
+                    invInitialEnd = invViewEnd;
+                    document.addEventListener('mousemove', onInvMouseMove);
+                    document.addEventListener('mouseup', onInvMouseUp);
+                }
+
+                invThumb.addEventListener('mousedown', (e) => onInvMouseDown(e, 'pan'));
+                invTopHandle.addEventListener('mousedown', (e) => onInvMouseDown(e, 'zoomTop'));
+                invBottomHandle.addEventListener('mousedown', (e) => onInvMouseDown(e, 'zoomBottom'));
+
+                function onInvMouseMove(e) {
+                    if (!invIsDragging) return;
+                    const deltaY = e.clientY - invStartY;
+                    const trackHeight = invTrack.clientHeight;
+                    const deltaItems = (deltaY / trackHeight) * invTotalItems;
+
+                    if (invDragType === 'pan') {
+                        const shift = Math.round(deltaItems);
+                        let newStart = invInitialStart + shift;
+                        let newEnd = invInitialEnd + shift;
+                        if (newStart < 0) { newStart = 0; newEnd = invInitialEnd - invInitialStart; }
+                        if (newEnd >= invTotalItems) { newEnd = invTotalItems - 1; newStart = invTotalItems - 1 - (invInitialEnd - invInitialStart); }
+                        invViewStart = newStart;
+                        invViewEnd = newEnd;
+                    } else if (invDragType === 'zoomTop') {
+                        invViewStart = Math.round(invInitialStart + deltaItems);
+                        if (invViewStart > invViewEnd - 1) invViewStart = invViewEnd - 1;
+                        if (invViewStart < 0) invViewStart = 0;
+                    } else if (invDragType === 'zoomBottom') {
+                        invViewEnd = Math.round(invInitialEnd + deltaItems);
+                        if (invViewEnd < invViewStart + 1) invViewEnd = invViewStart + 1;
+                        if (invViewEnd >= invTotalItems) invViewEnd = invTotalItems - 1;
+                    }
+                    updateInvChartAndView();
+                }
+
+                function onInvMouseUp() {
+                    invIsDragging = false;
+                    document.removeEventListener('mousemove', onInvMouseMove);
+                    document.removeEventListener('mouseup', onInvMouseUp);
+                }
+
+                invWrapper.addEventListener('wheel', (e) => {
+                    e.preventDefault();
+                    const shift = e.deltaY > 0 ? 1 : -1;
+                    if (invViewStart + shift >= 0 && invViewEnd + shift < invTotalItems) {
+                        invViewStart += shift;
+                        invViewEnd += shift;
+                        updateInvChartAndView();
                     }
                 });
             }

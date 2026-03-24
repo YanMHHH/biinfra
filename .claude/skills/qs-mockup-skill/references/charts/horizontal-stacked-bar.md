@@ -78,17 +78,23 @@ const getStepSize = (max) => {
 ```
 
 ### 3.2 数据准备（按总量排序）
+**重要：所有堆积柱状图必须按总量从高到低排序**
+
 ```javascript
 const chartData = [
-    { name: '类目1', highest: 145, average: 280, lowest: 35 },
-    { name: '类目2', highest: 132, average: 265, lowest: 32 },
+    { name: '类目1', value1: 145, value2: 280, value3: 35 },
+    { name: '类目2', value1: 132, value2: 265, value3: 32 },
     // ... 更多数据
-].map(d => ({ ...d, total: d.highest + d.average + d.lowest }))
-  .sort((a, b) => b.total - a.total);
+].sort((a, b) => (b.value1 + b.value2 + b.value3) - (a.value1 + a.value2 + a.value3));
 
-const maxValue = Math.max(...chartData.map(d => d.total));
+const maxValue = Math.max(...chartData.map(d => d.value1 + d.value2 + d.value3));
 const stepSize = getStepSize(maxValue);
 ```
+
+**排序规则：**
+- 计算每条数据的总量（所有堆积值之和）
+- 按总量降序排列（从大到小）
+- 不需要额外的 `.map()` 计算 total 字段，直接在 `.sort()` 中计算
 
 ### 3.3 Chart.js 基础配置
 ```javascript

@@ -294,11 +294,24 @@ table.qs-table th {
             </div>
 
             <div class="main-content">
-                <!-- CHARTS_PLACEHOLDER -->
+                <!-- 堆积柱状图示例 -->
+                <div class="row">
+                    <div class="col">
+                        <div class="visual-card">
+                            <div class="chart-header">
+                                <div class="chart-title">Stacked Bar Chart Example</div>
+                            </div>
+                            <div style="height: 400px;">
+                                <canvas id="stackedBarChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         function switchTab(tabName) {
             document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
@@ -346,8 +359,51 @@ table.qs-table th {
             });
         }
 
-        // 页面加载后初始化列宽调整
-        document.addEventListener('DOMContentLoaded', makeColumnsResizable);
+        // 步长计算函数
+        const getStepSize = (max) => {
+            const magnitude = Math.pow(10, Math.floor(Math.log10(max)));
+            const normalized = max / magnitude;
+            if (normalized <= 2) return magnitude / 2;
+            if (normalized <= 5) return magnitude;
+            return magnitude * 2;
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            makeColumnsResizable();
+
+            // 堆积柱状图数据（按总量从高到低排序）
+            const stackedBarData = [
+                { name: 'Category A', value1: 145, value2: 280, value3: 35 },
+                { name: 'Category B', value1: 132, value2: 265, value3: 32 },
+                { name: 'Category C', value1: 120, value2: 250, value3: 28 },
+                { name: 'Category D', value1: 95, value2: 210, value3: 22 },
+                { name: 'Category E', value1: 78, value2: 180, value3: 18 }
+            ].sort((a, b) => (b.value1 + b.value2 + b.value3) - (a.value1 + a.value2 + a.value3));
+
+            const maxValue = Math.max(...stackedBarData.map(d => d.value1 + d.value2 + d.value3));
+
+            new Chart(document.getElementById('stackedBarChart'), {
+                type: 'bar',
+                data: {
+                    labels: stackedBarData.map(d => d.name),
+                    datasets: [
+                        { label: 'Value 1', data: stackedBarData.map(d => d.value1), backgroundColor: '#0073bb' },
+                        { label: 'Value 2', data: stackedBarData.map(d => d.value2), backgroundColor: '#ff9900' },
+                        { label: 'Value 3', data: stackedBarData.map(d => d.value3), backgroundColor: '#1d8102' }
+                    ]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 }}}},
+                    scales: {
+                        x: { stacked: true, beginAtZero: true, ticks: { stepSize: getStepSize(maxValue) }},
+                        y: { stacked: true }
+                    }
+                }
+            });
+        });
     </script>
 </body>
 </html>

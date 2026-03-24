@@ -46,6 +46,9 @@
 - 表格不使用 `table-layout: fixed`，宽度由内容决定
 - 容器自动出现横向滚动条
 - 纵向滚动时表头固定（Sticky Header）
+- **CSS 要求**：`table.qs-table th` 和 `table.qs-table td` 必须设置 `position: sticky`
+  - `th` 需要 `top: 0; z-index: 10;` 保持表头固定
+  - `td` 需要 `position: sticky` 支持横向滚动时列固定
 
 ### 2.5 列宽调整
 - 模板已内置列宽拖拽功能

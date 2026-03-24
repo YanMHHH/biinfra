@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(\"D:\\\\Git Project\\\\agent-dataanalysis\\\\NAP_toB_Data_Service_Final.md\":*)",
+      "Bash(\"D:\\\\Git Project\\\\agent-dataanalysis\\\\nap_dashboard.html\":*)"
+    ]
+  }
+}

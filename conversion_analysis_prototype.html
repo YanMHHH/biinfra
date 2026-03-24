@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversion Analysis - QuickSight Prototype</title>
+    <style>
+        :root {
+            --qs-bg: #f2f3f3;
+            --qs-white: #ffffff;
+            --qs-border: #eaeded;
+            --qs-border-dark: #d5d5d5;
+            --qs-text-main: #16191f;
+            --qs-text-muted: #545b64;
+            --qs-table-header: #245675;
+            --qs-control-bg: #fafafa;
+            --qs-input-border: #a6a6a6;
+            --qs-highlight-red: #d32f2f;
+            --qs-page-bg: #e5e5e5;
+        }
+
+        body {
+            font-family: "Amazon Ember", Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--qs-page-bg);
+            color: var(--qs-text-main);
+        }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
+
+        .page-container {
+            margin: 0 10%;
+            background-color: var(--qs-bg);
+            min-height: 100vh;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar {
+            height: 40px;
+            background-color: var(--qs-white);
+            border-bottom: 1px solid var(--qs-border-dark);
+            display: flex; align-items: center; padding: 0 20px;
+        }
+        .tabs {
+            display: flex; background-color: var(--qs-bg); padding-left: 20px;
+            border-bottom: 1px solid var(--qs-border-dark);
+        }
+        .tab {
+            padding: 10px 20px; cursor: pointer; color: var(--qs-text-muted);
+            font-size: 14px; border: 1px solid transparent; border-bottom: none;
+            margin-top: 5px; transition: all 0.2s ease-in-out;
+        }
+        .tab:hover { color: var(--qs-text-main); }
+        .tab.active {
+            font-weight: bold; color: var(--qs-text-main); background-color: var(--qs-white);
+            border-color: var(--qs-border-dark); border-top: 2px solid transparent;
+        }
+
+        .tab-content { display: none; flex: 1; }
+        .tab-content.active { display: block; }
+
+        .controls-section {
+            background-color: var(--qs-control-bg); border-bottom: 1px solid var(--qs-border-dark);
+            padding: 15px 20px; margin-bottom: 2px; transition: all 0.3s ease;
+        }
+        .controls-header {
+            font-size: 14px; color: var(--qs-text-main); margin-bottom: 15px;
+            display: flex; justify-content: space-between; cursor: pointer; user-select: none;
+        }
+        #controls-icon { display: inline-block; transition: transform 0.3s ease; }
+        #controls-icon.collapsed { transform: rotate(180deg); }
+        .controls-grid {
+            display: flex; flex-wrap: wrap; gap: 20px; transform-origin: top;
+            transition: max-height 0.3s ease, opacity 0.3s ease; max-height: 1000px;
+            opacity: 1; overflow: hidden;
+        }
+        .controls-grid.collapsed { max-height: 0; opacity: 0; margin: 0; }
+        .controls-header.collapsed { margin-bottom: 0; }
+        .control-item { display: flex; flex-direction: column; width: 190px; }
+        .control-item label { font-size: 12px; color: var(--qs-text-main); margin-bottom: 4px; }
+        .control-item input, .control-item select {
+            width: 100%; padding: 6px 10px; border: 1px solid var(--qs-input-border);
+            border-radius: 2px; font-size: 13px; color: var(--qs-text-main);
+            box-sizing: border-box; background-color: var(--qs-white); height: 32px;
+        }
+
+        .main-content { padding: 10px 20px 20px 20px; display: flex; flex-direction: column; gap: 10px; }
+        .visual-card {
+            background-color: var(--qs-white); border: 1px solid var(--qs-border-dark);
+            padding: 15px; box-shadow: 0 1px 1px 0 rgba(0,28,36,.05);
+        }
+        .text-box { font-size: 16px; line-height: 1.6; font-weight: bold; }
+        .section-divider { text-align: center; font-weight: bold; color: var(--qs-highlight-red); padding: 10px; }
+
+        .table-scroll-container {
+            max-height: 300px;
+            overflow: auto;
+            border: 1px solid var(--qs-border-dark);
+            position: relative;
+        }
+
+        table.qs-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            position: relative;
+        }
+
+        .qs-product-img {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border: 1px solid var(--qs-border);
+            border-radius: 4px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        table.qs-table th {
+            background-color: var(--qs-table-header);
+            color: var(--qs-white);
+            font-weight: normal;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            outline: 1px solid var(--qs-border-dark);
+            outline-offset: -1px;
+            white-space: normal;
+            word-break: keep-all;
+            overflow-wrap: break-word;
+            line-height: 1.2;
+            min-width: 80px;
+            vertical-align: middle;
+        }
+
+        .resizer {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 5px;
+            cursor: col-resize;
+            user-select: none;
+            height: 100%;
+        }
+
+        .resizer:hover {
+            border-right: 2px solid #0073bb;
+        }
+
+        table.qs-table th, table.qs-table td {
+            border-right: 1px solid var(--qs-border-dark);
+            border-bottom: 1px solid var(--qs-border-dark);
+            padding: 8px 10px;
+            text-align: center;
+            position: relative;
+        }
+
+        table.qs-table td {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        table.qs-table th:last-child, table.qs-table td:last-child {
+            border-right: none;
+        }
+        table.qs-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        table.qs-table tr:nth-child(even) { background-color: #fafafa; }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <div class="navbar">
+            <div style="font-size: 12px; color: #545b64; margin: 0 auto;">&#128269; Analyze this dashboard in a Scenario</div>
+        </div>
+
+        <div class="tabs">
+            <div class="tab" id="tab-overview" onclick="switchTab('overview')">Overview</div>
+            <div class="tab active" id="tab-details" onclick="switchTab('details')">Details</div>
+        </div>
+
+        <div id="content-overview" class="tab-content">
+            <div class="main-content">
+                <div class="visual-card text-box" style="text-align: center; color: var(--qs-text-muted); padding: 50px;">
+                    This is the Overview section. (Content placeholder)
+                </div>
+            </div>
+        </div>
+
+        <div id="content-details" class="tab-content active">
+            <div class="controls-section">
+                <div class="controls-header" id="controls-header" onclick="toggleControls()">
+                    <span>Controls</span> <span id="controls-icon">&#708;</span>
+                </div>
+                <div class="controls-grid" id="controls-grid">
+                    <div class="control-item">
+                        <label>Start Date</label>
+                        <input type="date" value="2026-03-01">
+                    </div>
+                    <div class="control-item">
+                        <label>End Date</label>
+                        <input type="date" value="2026-03-23">
+                    </div>
+                    <div class="control-item">
+                        <label>Platform</label>
+                        <select><option>All</option><option>iOS</option><option>Android</option><option>Web</option></select>
+                    </div>
+                    <div class="control-item">
+                        <label>User Type</label>
+                        <select><option>All</option><option>New</option><option>Returning</option></select>
+                    </div>
+                    <div class="control-item">
+                        <label>Campaign ID</label>
+                        <input type="text" placeholder="Enter Campaign ID">
+                    </div>
+                    <div class="control-item">
+                        <label>Gender</label>
+                        <select><option>All</option><option>Male</option><option>Female</option><option>Other</option></select>
+                    </div>
+                    <div class="control-item">
+                        <label>Country</label>
+                        <select><option>All</option><option>US</option><option>UK</option><option>CN</option><option>JP</option></select>
+                    </div>
+                    <div class="control-item">
+                        <label>Sex</label>
+                        <select><option>All</option><option>M</option><option>F</option></select>
+                    </div>
+                    <div class="control-item">
+                        <label>Category</label>
+                        <select><option>All</option><option>Electronics</option><option>Fashion</option><option>Home</option></select>
+                    </div>
+                    <div class="control-item">
+                        <label>Email</label>
+                        <input type="text" placeholder="Enter Email">
+                    </div>
+                </div>
+            </div>
+
+            <div class="main-content">
+                <div class="visual-card text-box">
+                    Time Zone: UTC
+                </div>
+
+                <div class="visual-card section-divider">
+                    PART 1: Conversion Breakdown
+                </div>
+
+                <div class="visual-card">
+                    <div class="table-scroll-container">
+                        <table class="qs-table">
+                            <thead>
+                                <tr>
+                                    <th>商品图片</th>
+                                    <th>Campaign ID</th>
+                                    <th>Platform</th>
+                                    <th>Total Clicks</th>
+                                    <th>Unique Users</th>
+                                    <th>Conversion Rate</th>
+                                    <th>Revenue</th>
+                                    <th>AOV</th>
+                                    <th>Orders</th>
+                                    <th>Add to Cart</th>
+                                    <th>Cart Rate</th>
+                                    <th>Checkout</th>
+                                    <th>Checkout Rate</th>
+                                    <th>Bounce Rate</th>
+                                    <th>Avg Session</th>
+                                    <th>Page Views</th>
+                                    <th>ROI</th>
+                                    <th>CPC</th>
+                                    <th>CTR</th>
+                                    <th>Impressions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><img src="https://picsum.photos/40/40?random=1" class="qs-product-img" alt="Product"></td>
+                                    <td>CMP-2024-001</td>
+                                    <td>iOS</td>
+                                    <td>15,234</td>
+                                    <td>12,456</td>
+                                    <td>3.45%</td>
+                                    <td>$45,678</td>
+                                    <td>$89.50</td>
+                                    <td>510</td>
+                                    <td>2,345</td>
+                                    <td>15.4%</td>
+                                    <td>1,234</td>
+                                    <td>8.1%</td>
+                                    <td>42.3%</td>
+                                    <td>3:24</td>
+                                    <td>45,678</td>
+                                    <td>285%</td>
+                                    <td>$1.25</td>
+                                    <td>4.2%</td>
+                                    <td>362,450</td>
+                                </tr>
+                                <tr>/
+                                    <td><img src="https://picsum.photos/40/40?random=2" class="qs-product-img" alt="Product"></td>
+                                    <td>CMP-2024-002</td>
+                                    <td>Android</td>
+                                    <td>18,567</td>
+                                    <td>14,890</td>
+                                    <td>4.12%</td>
+                                    <td>$52,340</td>
+                                    <td>$95.20</td>
+                                    <td>550</td>
+                                    <td>2,890</td>
+                                    <td>15.6%</td>
+                                    <td>1,456</td>
+                                    <td>7.8%</td>
+                                    <td>38.5%</td>
+                                    <td>4:12</td>
+                                    <td>52,340</td>
+                                    <td>312%</td>
+                                    <td>$1.15</td>
+                                    <td>4.8%</td>
+                                    <td>386,790</td>
+                                </tr>
+                                <tr>
+                                    <td><img src="https://picsum.photos/40/40?random=3" class="qs-product-img" alt="Product"></td>
+                                    <td>CMP-2024-003</td>
+                                    <td>Web</td>
+                                    <td>22,345</td>
+                                    <td>18,234</td>
+                                    <td>2.89%</td>
+                                    <td>$38,920</td>
+                                    <td>$78.40</td>
+                                    <td>496</td>
+                                    <td>3,120</td>
+                                    <td>14.0%</td>
+                                    <td>1,890</td>
+                                    <td>8.5%</td>
+                                    <td>45.2%</td>
+                                    <td>2:56</td>
+                                    <td>38,920</td>
+                                    <td>245%</td>
+                                    <td>$1.35</td>
+                                    <td>3.9%</td>
+                                    <td>572,820</td>
+                                </tr>
+                                <tr>
+                                    <td><img src="https://picsum.photos/40/40?random=4" class="qs-product-img" alt="Product"></td>
+                                    <td>CMP-2024-004</td>
+                                    <td>iOS</td>
+                                    <td>12,890</td>
+                                    <td>10,234</td>
+                                    <td>5.23%</td>
+                                    <td>$67,450</td>
+                                    <td>$102.30</td>
+                                    <td>659</td>
+                                    <td>1,890</td>
+                                    <td>14.7%</td>
+                                    <td>1,120</td>
+                                    <td>8.7%</td>
+                                    <td>35.8%</td>
+                                    <td>5:18</td>
+                                    <td>67,450</td>
+                                    <td>398%</td>
+                                    <td>$0.98</td>
+                                    <td>5.6%</td>
+                                    <td>230,180</td>
+                                </tr>
+                                <tr>
+                                    <td><img src="https://picsum.photos/40/40?random=5" class="qs-product-img" alt="Product"></td>
+                                    <td>CMP-2024-005</td>
+                                    <td>Android</td>
+                                    <td>16,780</td>
+                                    <td>13,456</td>
+                                    <td>3.78%</td>
+                                    <td>$48,920</td>
+                                    <td>$86.70</td>
+                                    <td>564</td>
+                                    <td>2,456</td>
+                                    <td>14.6%</td>
+                                    <td>1,345</td>
+                                    <td>8.0%</td>
+                                    <td>40.1%</td>
+                                    <td>3:45</td>
+                                    <td>48,920</td>
+                                    <td>278%</td>
+                                    <td>$1.22</td>
+                                    <td>4.5%</td>
+                                    <td>372,890</td>
+                                </tr>
+                                <tr>
+                                    <td><img src="https://picsum.photos/40/40?random=6" class="qs-product-img" alt="Product"></td>
+                                    <td>CMP-2024-006</td>
+                                    <td>Web</td>
+                                    <td>19,456</td>
+                                    <td>15,678</td>
+                                    <td>3.21%</td>
+                                    <td>$41,230</td>
+                                    <td>$82.10</td>
+                                    <td>502</td>
+                                    <td>2,678</td>
+                                    <td>13.8%</td>
+                                    <td>1,567</td>
+                                    <td>8.1%</td>
+                                    <td>43.7%</td>
+                                    <td>3:08</td>
+                                    <td>41,230</td>
+                                    <td>256%</td>
+                                    <td>$1.28</td>
+                                    <td>4.1%</td>
+                                    <td>474,340</td>
+                                </tr>
+                                <tr>
+                                    <td><img src="https://picsum.photos/40/40?random=7" class="qs-product-img" alt="Product"></td>
+                                    <td>CMP-2024-007</td>
+                                    <td>iOS</td>
+                                    <td>14,567</td>
+                                    <td>11,890</td>
+                                    <td>4.56%</td>
+                                    <td>$58,340</td>
+                                    <td>$98.60</td>
+                                    <td>592</td>
+                                    <td>2,234</td>
+                                    <td>15.3%</td>
+                                    <td>1,289</td>
+                                    <td>8.8%</td>
+                                    <td>37.2%</td>
+                                    <td>4:32</td>
+                                    <td>58,340</td>
+                                    <td>325%</td>
+                                    <td>$1.08</td>
+                                    <td>5.1%</td>
+                                    <td>285,620</td>
+                                </tr>
+                                <tr>
+                                    <td><img src="https://picsum.photos/40/40?random=8" class="qs-product-img" alt="Product"></td>
+                                    <td>CMP-2024-008</td>
+                                    <td>Android</td>
+                                    <td>21,234</td>
+                                    <td>17,456</td>
+                                    <td>2.95%</td>
+                                    <td>$36,780</td>
+                                    <td>$74.50</td>
+                                    <td>494</td>
+                                    <td>3,234</td>
+                                    <td>15.2%</td>
+                                    <td>1,890</td>
+                                    <td>8.9%</td>
+                                    <td>46.8%</td>
+                                    <td>2:48</td>
+                                    <td>36,780</td>
+                                    <td>238%</td>
+                                    <td>$1.42</td>
+                                    <td>3.7%</td>
+                                    <td>573,890</td>
+                                </tr>
+                                <tr>
+                                    <td><img src="https://picsum.photos/40/40?random=9" class="qs-product-img" alt="Product"></td>
+                                    <td>CMP-2024-009</td>
+                                    <td>Web</td>
+                                    <td>17,890</td>
+                                    <td>14,234</td>
+                                    <td>3.67%</td>
+                                    <td>$49,560</td>
+                                    <td>$88.90</td>
+                                    <td>557</td>
+                                    <td>2,567</td>
+                                    <td>14.3%</td>
+                                    <td>1,456</td>
+                                    <td>8.1%</td>
+                                    <td>41.5%</td>
+                                    <td>3:36</td>
+                                    <td>49,560</td>
+                                    <td>289%</td>
+                                    <td>$1.19</td>
+                                    <td>4.4%</td>
+                                    <td>406,590</td>
+                                </tr>
+                                <tr>
+                                    <td><img src="https://picsum.photos/40/40?random=10" class="qs-product-img" alt="Product"></td>
+                                    <td>CMP-2024-010</td>
+                                    <td>iOS</td>
+                                    <td>13,456</td>
+                                    <td>10,890</td>
+                                    <td>4.89%</td>
+                                    <td>$62,340</td>
+                                    <td>$105.20</td>
+                                    <td>593</td>
+                                    <td>1,987</td>
+                                    <td>14.8%</td>
+                                    <td>1,156</td>
+                                    <td>8.6%</td>
+                                    <td>36.4%</td>
+                                    <td>4:58</td>
+                                    <td>62,340</td>
+                                    <td>368%</td>
+                                    <td>$1.02</td>
+                                    <td>5.4%</td>
+                                    <td>249,260</td>
+                                </tr>
+                                <tr>
+                                    <td><img src="https://picsum.photos/40/40?random=11" class="qs-product-img" alt="Product"></td>
+                                    <td>CMP-2024-011</td>
+                                    <td>Android</td>
+                                    <td>20,123</td>
+                                    <td>16,234</td>
+                                    <td>3.34%</td>
+                                    <td>$44,560</td>
+                                    <td>$84.30</td>
+                                    <td>528</td>
+                                    <td>2,890</td>
+                                    <td>14.4%</td>
+                                    <td>1,678</td>
+                                    <td>8.3%</td>
+                                    <td>42.9%</td>
+                                    <td>3:22</td>
+                                    <td>44,560</td>
+                                    <td>267%</td>
+                                    <td>$1.26</td>
+                                    <td>4.3%</td>
+                                    <td>467,910</td>
+                                </tr>
+                                <tr>
+                                    <td><img src="https://picsum.photos/40/40?random=12" class="qs-product-img" alt="Product"></td>
+                                    <td>CMP-2024-012</td>
+                                    <td>Web</td>
+                                    <td>18,234</td>
+                                    <td>14,567</td>
+                                    <td>3.12%</td>
+                                    <td>$39,870</td>
+                                    <td>$79.20</td>
+                                    <td>503</td>
+                                    <td>2,678</td>
+                                    <td>14.7%</td>
+                                    <td>1,534</td>
+                                    <td>8.4%</td>
+                                    <td>44.6%</td>
+                                    <td>3:02</td>
+                                    <td>39,870</td>
+                                    <td>252%</td>
+                                    <td>$1.31</td>
+                                    <td>4.0%</td>
+                                    <td>455,850</td>
+                                </tr>
+                                <tr>
+                                    <td><img src="https://picsum.photos/40/40?random=13" class="qs-product-img" alt="Product"></td>
+                                    <td>CMP-2024-013</td>
+                                    <td>iOS</td>
+                                    <td>15,678</td>
+                                    <td>12,345</td>
+                                    <td>4.23%</td>
+                                    <td>$54,230</td>
+                                    <td>$92.40</td>
+                                    <td>587</td>
+                                    <td>2,345</td>
+                                    <td>15.0%</td>
+                                    <td>1,289</td>
+                                    <td>8.2%</td>
+                                    <td>39.7%</td>
+                                    <td>4:18</td>
+                                    <td>54,230</td>
+                                    <td>308%</td>
+                                    <td>$1.12</td>
+                                    <td>4.9%</td>
+                                    <td>319,960</td>
+                                </tr>
+                                <tr>
+                                    <td><img src="https://picsum.photos/40/40?random=14" class="qs-product-img" alt="Product"></td>
+                                    <td>CMP-2024-014</td>
+                                    <td>Android</td>
+                                    <td>19,890</td>
+                                    <td>15,890</td>
+                                    <td>3.56%</td>
+                                    <td>$47,120</td>
+                                    <td>$87.50</td>
+                                    <td>538</td>
+                                    <td>2,789</td>
+                                    <td>14.0%</td>
+                                    <td>1,567</td>
+                                    <td>7.9%</td>
+                                    <td>41.8%</td>
+                                    <td>3:28</td>
+                                    <td>47,120</td>
+                                    <td>276%</td>
+                                    <td>$1.23</td>
+                                    <td>4.4%</td>
+                                    <td>451,820</td>
+                                </tr>
+                                <tr>
+                                    <td><img src="https://picsum.photos/40/40?random=15" class="qs-product-img" alt="Product"></td>
+                                    <td>CMP-2024-015</td>
+                                    <td>Web</td>
+                                    <td>16,456</td>
+                                    <td>13,234</td>
+                                    <td>3.89%</td>
+                                    <td>$51,340</td>
+                                    <td>$90.80</td>
+                                    <td>565</td>
+                                    <td>2,456</td>
+                                    <td>14.9%</td>
+                                    <td>1,423</td>
+                                    <td>8.6%</td>
+                                    <td>40.3%</td>
+                                    <td>3:52</td>
+                                    <td>51,340</td>
+                                    <td>295%</td>
+                                    <td>$1.17</td>
+                                    <td>4.6%</td>
+                                    <td>357,740</td>
+                                </tr>
+                                <tr>
+                                    <td><img src="https://picsum.photos/40/40?random=16" class="qs-product-img" alt="Product"></td>
+                                    <td>CMP-2024-016</td>
+                                    <td>iOS</td>
+                                    <td>14,234</td>
+                                    <td>11,456</td>
+                                    <td>4.67%</td>
+                                    <td>$59,670</td>
+                                    <td>$99.30</td>
+                                    <td>601</td>
+                                    <td>2,123</td>
+                                    <td>14.9%</td>
+                                    <td>1,234</td>
+                                    <td>8.7%</td>
+                                    <td>38.1%</td>
+                                    <td>4:42</td>
+                                    <td>59,670</td>
+                                    <td>335%</td>
+                                    <td>$1.06</td>
+                                    <td>5.2%</td>
+                                    <td>273,730</td>
+                                </tr>
+                                <tr>
+                                    <td><img src="https://picsum.photos/40/40?random=17" class="qs-product-img" alt="Product"></td>
+                                    <td>CMP-2024-017</td>
+                                    <td>Android</td>
+                                    <td>17,567</td>
+                                    <td>14,123</td>
+                                    <td>3.45%</td>
+                                    <td>$45,890</td>
+                                    <td>$85.60</td>
+                                    <td>536</td>
+                                    <td>2,567</td>
+                                    <td>14.6%</td>
+                                    <td>1,456</td>
+                                    <td>8.3%</td>
+                                    <td>42.4%</td>
+                                    <td>3:34</td>
+                                    <td>45,890</td>
+                                    <td>271%</td>
+                                    <td>$1.24</td>
+                                    <td>4.5%</td>
+                                    <td>390,370</td>
+                                </tr>
+                                <tr>
+                                    <td><img src="https://picsum.photos/40/40?random=18" class="qs-product-img" alt="Product"></td>
+                                    <td>CMP-2024-018</td>
+                                    <td>Web</td>
+                                    <td>20,890</td>
+                                    <td>16,890</td>
+                                    <td>3.01%</td>
+                                    <td>$38,450</td>
+                                    <td>$76.80</td>
+                                    <td>501</td>
+                                    <td>3,012</td>
+                                    <td>14.4%</td>
+                                    <td>1,789</td>
+                                    <td>8.6%</td>
+                                    <td>45.9%</td>
+                                    <td>2:54</td>
+                                    <td>38,450</td>
+                                    <td>241%</td>
+                                    <td>$1.38</td>
+                                    <td>3.8%</td>
+                                    <td>549,740</td>
+                                </tr>
+                                <tr>
+                                    <td><img src="https://picsum.photos/40/40?random=19" class="qs-product-img" alt="Product"></td>
+                                    <td>CMP-2024-019</td>
+                                    <td>iOS</td>
+                                    <td>16,123</td>
+                                    <td>12,890</td>
+                                    <td>4.34%</td>
+                                    <td>$56,780</td>
+                                    <td>$94.70</td>
+                                    <td>599</td>
+                                    <td>2,289</td>
+                                    <td>14.2%</td>
+                                    <td>1,345</td>
+                                    <td>8.3%</td>
+                                    <td>39.2%</td>
+                                    <td>4:26</td>
+                                    <td>56,780</td>
+                                    <td>318%</td>
+                                    <td>$1.10</td>
+                                    <td>5.0%</td>
+                                    <td>322,460</td>
+                                </tr>
+                                <tr>
+                                    <td><img src="https://picsum.photos/40/40?random=20" class="qs-product-img" alt="Product"></td>
+                                    <td>CMP-2024-020</td>
+                                    <td>Android</td>
+                                    <td>18,901</td>
+                                    <td>15,234</td>
+                                    <td>3.78%</td>
+                                    <td>$50,120</td>
+                                    <td>$89.20</td>
+                                    <td>562</td>
+                                    <td>2,734</td>
+                                    <td>14.5%</td>
+                                    <td>1,589</td>
+                                    <td>8.4%</td>
+                                    <td>40.7%</td>
+                                    <td>3:48</td>
+                                    <td>50,120</td>
+                                    <td>287%</td>
+                                    <td>$1.20</td>
+                                    <td>4.6%</td>
+                                    <td>410,890</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById('tab-' + tabName).classList.add('active');
+            document.getElementById('content-' + tabName).classList.add('active');
+        }
+        function toggleControls() {
+            document.getElementById('controls-grid').classList.toggle('collapsed');
+            document.getElementById('controls-icon').classList.toggle('collapsed');
+            document.getElementById('controls-header').classList.toggle('collapsed');
+        }
+
+        function makeColumnsResizable() {
+            const table = document.querySelector('.qs-table');
+            if (!table) return;
+
+            const cols = table.querySelectorAll('th');
+            cols.forEach((col, index) => {
+                const resizer = document.createElement('div');
+                resizer.className = 'resizer';
+                col.appendChild(resizer);
+
+                let startX, startWidth;
+                resizer.addEventListener('mousedown', e => {
+                    e.preventDefault();
+                    startX = e.pageX;
+                    startWidth = col.offsetWidth;
+                    document.addEventListener('mousemove', resize);
+                    document.addEventListener('mouseup', stopResize);
+                });
+
+                function resize(e) {
+                    const width = startWidth + e.pageX - startX;
+                    col.style.width = width + 'px';
+                    col.style.minWidth = width + 'px';
+                    col.style.maxWidth = width + 'px';
+                }
+
+                function stopResize() {
+                    document.removeEventListener('mousemove', resize);
+                    document.removeEventListener('mouseup', stopResize);
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', makeColumnsResizable);
+    </script>
+</body>
+</html>

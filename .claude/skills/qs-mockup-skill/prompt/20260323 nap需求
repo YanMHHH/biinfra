@@ -1,0 +1,21 @@
+请严格按照qs-mockup-skill中quicksight的要求进行toB的mockup设计
+
+包含3个tab，名称分别是销售分析、价格分析、库存分析
+
+在Tab1 销售分析中：
+Controls: Start Date, End Date, Country, Category, Gender, Conditions, Comparison Type
+Body：
+  Section1：一个Table，列分别为Store Name、Orders、Sales、AOV、Impressions、Clicks、Conversion Rate、Return Rate。一共有2行数据，Store Name分别为NET-A-PORTER 和 Competitor Stores
+  Section2：共有3个趋势图，分别为Orders Daily Trend、Sales Daily Trend、AOV Daily Trend，每个趋势图有2个折线，分别代表NET-A-PORTER和Competitor Stores
+  Section3：共有3个趋势图，分别为Impressions Daily Trend、Clicks Daily Trend、Conversion Rate Daily Trend，每个趋势图有2个折线，分别代表NET-A-PORTER和Competitor Stores
+  Section4：共有1个趋势图，宽度与上述折线图表相同（无需拉伸至全宽），为Return Rate Daily Trend，有2个折线，分别代表NET-A-PORTER和Competitor Stores
+
+请直接帮我mock数据，然后给我符合quicksight风格的html文件,文件名为nap_qs_mockup.html
+
+
+请严格按照qs-mockup-skill中quicksight的要求进行toB的mockup设计，直接修改nap_qs_mockup.html文件的Tab2
+在Tab2 价格分析中：
+Controls：Country, Category, Gender, Conditions, Comparison Scope, Brand
+Body：
+  Section1：3个KPI卡片，分别代表Priced Highest Products、Priced Lowest Products、Priced Average Products。这三个卡片的正中间写商品数量，下方有个百分比条，显示占所有商品的百分比
+  Section2：有两个组件，第一个组件是堆叠柱状图，X轴为Category、Y轴为商品数量，不同的颜色有 红色（Priced Highest）、灰色（Priced Average）、绿色（Priced Lowest）；第二个组件也是堆叠柱状图，X轴为库存量Top20的Brand、、Y轴为商品数量，不同的颜色有 红色（Priced Highest）、灰色（Priced Average）、绿色（Priced Lowest）

@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickSight Prototype</title>
+    <style>
+        :root {
+            --qs-bg: #f2f3f3;
+            --qs-white: #ffffff;
+            --qs-border: #eaeded;
+            --qs-border-dark: #d5d5d5;
+            --qs-text-main: #16191f;
+            --qs-text-muted: #545b64;
+            --qs-table-header: #245675;
+            --qs-control-bg: #fafafa;
+            --qs-input-border: #a6a6a6;
+            --qs-highlight-red: #d32f2f;
+            --qs-page-bg: #e5e5e5;
+        }
+
+        body {
+            font-family: "Amazon Ember", Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--qs-page-bg);
+            color: var(--qs-text-main);
+        }
+
+        /* 滚动条美化 (让滚动更像真实的 BI 系统) */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
+
+        .page-container {
+            margin: 0 10%;
+            background-color: var(--qs-bg);
+            min-height: 100vh;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Navigation & Tabs */
+        .navbar {
+            height: 40px;
+            background-color: var(--qs-white);
+            border-bottom: 1px solid var(--qs-border-dark);
+            display: flex; align-items: center; padding: 0 20px;
+        }
+        .tabs {
+            display: flex; background-color: var(--qs-bg); padding-left: 20px;
+            border-bottom: 1px solid var(--qs-border-dark);
+        }
+        .tab {
+            padding: 10px 20px; cursor: pointer; color: var(--qs-text-muted);
+            font-size: 14px; border: 1px solid transparent; border-bottom: none;
+            margin-top: 5px; transition: all 0.2s ease-in-out;
+        }
+        .tab:hover { color: var(--qs-text-main); }
+        .tab.active {
+            font-weight: bold; color: var(--qs-text-main); background-color: var(--qs-white);
+            border-color: var(--qs-border-dark); border-top: 2px solid transparent;
+        }
+
+        .tab-content { display: none; flex: 1; }
+        .tab-content.active { display: block; }
+
+        /* Controls Section */
+        .controls-section {
+            background-color: var(--qs-control-bg); border-bottom: 1px solid var(--qs-border-dark);
+            padding: 15px 20px; margin-bottom: 2px; transition: all 0.3s ease;
+        }
+        .controls-header {
+            font-size: 14px; color: var(--qs-text-main); margin-bottom: 15px;
+            display: flex; justify-content: space-between; cursor: pointer; user-select: none;
+        }
+        #controls-icon { display: inline-block; transition: transform 0.3s ease; }
+        #controls-icon.collapsed { transform: rotate(180deg); }
+        .controls-grid {
+            display: flex; flex-wrap: wrap; gap: 20px; transform-origin: top;
+            transition: max-height 0.3s ease, opacity 0.3s ease; max-height: 1000px;
+            opacity: 1; overflow: hidden;
+        }
+        .controls-grid.collapsed { max-height: 0; opacity: 0; margin: 0; }
+        .controls-header.collapsed { margin-bottom: 0; }
+        .control-item { display: flex; flex-direction: column; width: 190px; }
+        .control-item label { font-size: 12px; color: var(--qs-text-main); margin-bottom: 4px; }
+        .control-item input, .control-item select {
+            width: 100%; padding: 6px 10px; border: 1px solid var(--qs-input-border);
+            border-radius: 2px; font-size: 13px; color: var(--qs-text-main);
+            box-sizing: border-box; background-color: var(--qs-white); height: 32px;
+        }
+        .control-hint { font-size: 11px; color: var(--qs-text-muted); margin-top: 4px; }
+
+        /* Main Body Content */
+        .main-content { padding: 10px 20px 20px 20px; display: flex; flex-direction: column; gap: 10px; }
+        .visual-card {
+            background-color: var(--qs-white); border: 1px solid var(--qs-border-dark);
+            padding: 15px; box-shadow: 0 1px 1px 0 rgba(0,28,36,.05);
+        }
+        .text-box { font-size: 16px; line-height: 1.6; font-weight: bold; }
+        .section-divider { text-align: center; font-weight: bold; color: var(--qs-highlight-red); padding: 10px; }
+
+        /* === 核心更新：Charts & Tables === */
+        .chart-header { margin-bottom: 10px; }
+        .chart-title { font-size: 16px; font-weight: bold; color: var(--qs-text-main); }
+        .chart-description { font-size: 12px; color: var(--qs-text-muted); margin-top: 4px; }
+
+        /* 限制表格最高 400px，超出滚动 */
+        .table-scroll-container {
+            max-height: 400px; /* 需求3: 指定最高高度为400px */
+            overflow: auto;    /* 需求2 & 3: 自动出现上下、左右滚动条 */
+            border: 1px solid var(--qs-border-dark); /* 外层边框，防止滚动时边框丢失 */
+        }
+
+        table.qs-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+
+/* === 新增：真实商品图片样式 === */
+.qs-product-img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover; /* 确保图片比例不失真 */
+    border: 1px solid var(--qs-border);
+    border-radius: 4px;
+    display: block;
+    margin: 0 auto;
+}
+
+/* 保留占位符作为兜底方案 */
+.qs-img-placeholder {
+    width: 40px;
+    height: 40px;
+    background-color: #f2f3f3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: #a6a6a6;
+    border-radius: 4px;
+    margin: 0 auto;
+}
+
+/* === 新增：表头折行逻辑 === */
+table.qs-table th {
+    background-color: var(--qs-table-header);
+    color: var(--qs-white);
+    font-weight: normal;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    outline: 1px solid var(--qs-border-dark);
+    outline-offset: -1px;
+    white-space: normal;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    line-height: 1.2;
+    min-width: 80px;
+    vertical-align: middle;
+}
+
+/* 列宽调整功能 */
+.resizer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 5px;
+    cursor: col-resize;
+    user-select: none;
+    height: 100%;
+}
+
+.resizer:hover {
+    border-right: 2px solid #0073bb;
+}
+
+/* 如果某些列确实不需要折行，可以保留这个类 */
+.no-wrap {
+    white-space: nowrap !important;
+}
+
+        table.qs-table th, table.qs-table td {
+            border-right: 1px solid var(--qs-border-dark);
+            border-bottom: 1px solid var(--qs-border-dark);
+            padding: 8px 10px;
+            text-align: center;
+            position: relative;
+        }
+
+        table.qs-table td {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        table.qs-table th:last-child, table.qs-table td:last-child {
+            border-right: none;
+        }
+        table.qs-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        table.qs-table tr:nth-child(even) { background-color: #fafafa; }
+
+        .row { display: flex; gap: 10px; }
+        .col { flex: 1; }
+
+        /* KPI 卡片样式 */
+        .kpi-card {
+            text-align: center;
+            padding: 30px 20px;
+        }
+        .kpi-value {
+            font-size: 36px;
+            font-weight: bold;
+            color: var(--qs-text-main);
+            margin-bottom: 8px;
+        }
+        .kpi-label {
+            font-size: 14px;
+            color: var(--qs-text-muted);
+        }
+
+        /* 图表占位符样式 */
+        .chart-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--qs-text-muted);
+            font-size: 16px;
+            font-weight: 500;
+            border-radius: 4px;
+        }
+
+        /* 图表canvas自适应 */
+        canvas {
+            max-width: 100%;
+        }
+        canvas:not([style*="height"]) {
+            height: auto !important;
+        }
+
+        /* 图表标题和说明 */
+        .chart-header {
+            margin-bottom: 12px;
+        }
+        .chart-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #000000;
+            margin-bottom: 4px;
+        }
+        .chart-description {
+            font-size: 12px;
+            color: var(--qs-text-muted);
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <div class="navbar">
+            <div style="font-size: 12px; color: #545b64; margin: 0 auto;">&#128269; Analyze this dashboard in a Scenario</div>
+        </div>
+
+        <div class="tabs">
+            <div class="tab" id="tab-overview" onclick="switchTab('overview')">Overview</div>
+            <div class="tab active" id="tab-details" onclick="switchTab('details')">Dashboard Details</div>
+        </div>
+
+        <div id="content-overview" class="tab-content">
+            <div class="main-content">
+                <div class="visual-card text-box" style="text-align: center; color: var(--qs-text-muted); padding: 50px;">
+                    This is the Overview section. (Content placeholder)
+                </div>
+            </div>
+        </div>
+
+        <div id="content-details" class="tab-content active">
+            <div class="controls-section">
+                <div class="controls-header" id="controls-header" onclick="toggleControls()">
+                    <span>Controls</span> <span id="controls-icon">&#708;</span>
+                </div>
+                <div class="controls-grid" id="controls-grid">
+                    <!-- CONTROLS_PLACEHOLDER -->
+                </div>
+            </div>
+
+            <div class="main-content">
+                <!-- CHARTS_PLACEHOLDER -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById('tab-' + tabName).classList.add('active');
+            document.getElementById('content-' + tabName).classList.add('active');
+        }
+        function toggleControls() {
+            document.getElementById('controls-grid').classList.toggle('collapsed');
+            document.getElementById('controls-icon').classList.toggle('collapsed');
+            document.getElementById('controls-header').classList.toggle('collapsed');
+        }
+
+        // 列宽调整功能
+        function makeColumnsResizable() {
+            const table = document.querySelector('.qs-table');
+            if (!table) return;
+
+            const cols = table.querySelectorAll('th');
+            cols.forEach((col, index) => {
+                const resizer = document.createElement('div');
+                resizer.className = 'resizer';
+                col.appendChild(resizer);
+
+                let startX, startWidth;
+                resizer.addEventListener('mousedown', e => {
+                    e.preventDefault();
+                    startX = e.pageX;
+                    startWidth = col.offsetWidth;
+                    document.addEventListener('mousemove', resize);
+                    document.addEventListener('mouseup', stopResize);
+                });
+
+                function resize(e) {
+                    const width = startWidth + e.pageX - startX;
+                    col.style.width = width + 'px';
+                    col.style.minWidth = width + 'px';
+                    col.style.maxWidth = width + 'px';
+                }
+
+                function stopResize() {
+                    document.removeEventListener('mousemove', resize);
+                    document.removeEventListener('mouseup', stopResize);
+                }
+            });
+        }
+
+        // 页面加载后初始化列宽调整
+        document.addEventListener('DOMContentLoaded', makeColumnsResizable);
+    </script>
+</body>
+</html>

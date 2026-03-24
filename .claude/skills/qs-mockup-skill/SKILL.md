@@ -21,7 +21,12 @@ description: 快速生成 Amazon QuickSight 风格的高保真 HTML 报表原型
    - 详细规范请参考 `#[[file:references/components.md]]` 中的各组件章节
    - 布局规范请参考 `#[[file:references/layout.md]]`
 
-4. **生成图表**：
+4. **左侧伸缩栏**（可选）：
+   - 详细规范请参考 `#[[file:references/sidebar.md]]`
+   - 用于版本管理和页面切换
+   - 白色悬浮设计，不占用主内容区域宽度
+
+5. **生成图表**：
    - 趋势图规范：`#[[file:references/charts/line-chart.md]]`
    - 横向堆积图规范：`#[[file:references/charts/horizontal-stacked-bar.md]]`
    - 表格规范：`#[[file:references/charts/table.md]]`

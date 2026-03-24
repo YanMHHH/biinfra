@@ -13,9 +13,77 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            /*height: 100vh;*/
             background: #f5f5f5;
             margin: 0;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: #ffffff;
+            padding: 20px;
+            box-sizing: border-box;
+            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            transition: width 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar.collapsed {
+            width: 70px;
+            padding: 20px 8px;
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-title {
+            font-size: 12px;
+            color: #545b64;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar.collapsed .sidebar-title {
+            opacity: 0;
+            font-size: 0;
+        }
+
+        .version-name {
+            font-size: 14px;
+            color: #545b64;
+            font-weight: 500;
+            transition: opacity 0.3s ease;
+            padding: 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .version-name.active {
+            background-color: #f0f7ff;
+            color: #1976d2;
+            font-weight: 600;
+        }
+
+        .sidebar.collapsed .version-name {
+            opacity: 0;
+            font-size: 0;
+        }
+
+        .main-wrapper {
+            width: 100%;
+            overflow-y: auto;
         }
 
         .content-frame {
@@ -26,10 +94,23 @@
     </style>
 </head>
 <body>
-    <iframe class="content-frame" id="contentFrame"></iframe>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-title">Dashboard Version</div>
+            <button class="toggle-btn" id="toggleBtn">◀</button>
+        </div>
+        <div class="version-name active">NAP-mockup-v1-20260324</div>
+    </div>
+    <div class="main-wrapper">
+        <iframe class="content-frame" id="contentFrame"></iframe>
+    </div>
 
     <script>
         const frame = document.getElementById('contentFrame');
+        const sidebar = document.getElementById('sidebar');
+        const toggleBtn = document.getElementById('toggleBtn');
+        let isCollapsed = false;
+
         frame.src = './toB HTML/NAP_tob_mockup_v1_20260324.html';
 
         frame.onload = () => {
@@ -39,6 +120,12 @@
             resizeFrame();
             frame.contentWindow.addEventListener('resize', resizeFrame);
         };
+
+        toggleBtn.addEventListener('click', () => {
+            isCollapsed = !isCollapsed;
+            sidebar.classList.toggle('collapsed');
+            toggleBtn.textContent = isCollapsed ? '▶' : '◀';
+        });
     </script>
 </body>
 </html>

@@ -16,6 +16,11 @@
 - 组件标题显示在各自卡片内部
 - 使用 `.row` 和 `.col` 实现横向布局
 
+### 1.3 边界对齐规则
+- 同一 Section 内的所有组件上下边界必须完全对齐
+- 所有 visual-card 设置 `height: 100%`
+- 使用 `display: flex; flex-direction: column;` 分配内容空间
+
 ---
 
 ## 二、布局助手

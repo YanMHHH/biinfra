@@ -1,0 +1,1827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickSight Prototype</title>
+    <style>
+        :root {
+            --qs-bg: #f2f3f3;
+            --qs-white: #ffffff;
+            --qs-border: #eaeded;
+            --qs-border-dark: #d5d5d5;
+            --qs-text-main: #16191f;
+            --qs-text-muted: #545b64;
+            --qs-table-header: #245675;
+            --qs-control-bg: #fafafa;
+            --qs-input-border: #a6a6a6;
+            --qs-highlight-red: #d32f2f;
+            --qs-page-bg: #e5e5e5;
+        }
+
+        /* 全局盒模型重置，确保高度一致的关键 */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Amazon Ember", Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--qs-page-bg);
+            color: var(--qs-text-main);
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
+
+        .page-container {
+            margin: 0 10%;
+            background-color: var(--qs-bg);
+            min-height: 100vh;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Navigation & Tabs */
+        .navbar {
+            height: 40px;
+            background-color: var(--qs-white);
+            border-bottom: 1px solid var(--qs-border-dark);
+            display: flex; align-items: center; padding: 0 20px;
+        }
+        .tabs {
+            display: flex; background-color: var(--qs-bg); padding-left: 20px;
+            border-bottom: 1px solid var(--qs-border-dark);
+        }
+        .tab {
+            padding: 10px 20px; cursor: pointer; color: var(--qs-text-muted);
+            font-size: 14px; border: 1px solid transparent; border-bottom: none;
+            margin-top: 5px; transition: all 0.2s ease-in-out;
+        }
+        .tab:hover { color: var(--qs-text-main); }
+        .tab.active {
+            font-weight: bold; color: var(--qs-text-main); background-color: var(--qs-white);
+            border-color: var(--qs-border-dark); border-top: 2px solid transparent;
+        }
+
+        .tab-content { display: none; flex: 1; }
+        .tab-content.active { display: block; }
+
+        /* Controls Section */
+        .controls-section {
+            background-color: var(--qs-control-bg); border-bottom: 1px solid var(--qs-border-dark);
+            padding: 15px 20px; margin-bottom: 2px; transition: all 0.3s ease;
+        }
+        .controls-header {
+            font-size: 14px; color: var(--qs-text-main); margin-bottom: 15px;
+            display: flex; justify-content: space-between; cursor: pointer; user-select: none;
+        }
+        #controls-icon { display: inline-block; transition: transform 0.3s ease; }
+        #controls-icon.collapsed { transform: rotate(180deg); }
+        .controls-grid {
+            display: flex; flex-wrap: wrap; gap: 20px; transform-origin: top;
+            transition: max-height 0.3s ease, opacity 0.3s ease; max-height: 1000px;
+            opacity: 1; overflow: hidden;
+        }
+        .controls-grid.collapsed { max-height: 0; opacity: 0; margin: 0; }
+        .controls-header.collapsed { margin-bottom: 0; }
+        .control-item { display: flex; flex-direction: column; width: 190px; }
+        .control-item label { font-size: 12px; color: var(--qs-text-main); margin-bottom: 4px; }
+        .control-item input, .control-item select {
+            width: 100%; padding: 6px 10px; border: 1px solid var(--qs-input-border);
+            border-radius: 2px; font-size: 13px; color: var(--qs-text-main);
+            box-sizing: border-box; background-color: var(--qs-white); height: 32px;
+        }
+        .control-hint { font-size: 11px; color: var(--qs-text-muted); margin-top: 4px; }
+
+        /* Main Body Content */
+        .main-content { padding: 10px 20px 20px 20px; display: flex; flex-direction: column; gap: 10px; }
+        .visual-card {
+            background-color: var(--qs-white); border: 1px solid var(--qs-border-dark);
+            padding: 15px; box-shadow: 0 1px 1px 0 rgba(0,28,36,.05);
+        }
+        .text-box { font-size: 15px; line-height: 1.6; font-weight: bold; }
+        .section-divider { text-align: center; font-weight: bold; color: var(--qs-highlight-red); padding: 10px; }
+
+        /* Charts & Tables */
+        .chart-header { margin-bottom: 10px; }
+        .chart-title { font-size: 15px; font-weight: bold; color: var(--qs-text-main); position: sticky; top: 0; z-index: 9; background-color: var(--qs-white); }
+        .chart-description { font-size: 12px; color: var(--qs-text-muted); margin-top: 4px; }
+
+        .table-scroll-container {
+            max-height: 400px;
+            overflow: auto;
+            border: 1px solid var(--qs-border-dark);
+        }
+
+        table.qs-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        .qs-product-img {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border: 1px solid var(--qs-border);
+            border-radius: 4px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .qs-img-placeholder {
+            width: 40px;
+            height: 40px;
+            background-color: #f2f3f3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: #a6a6a6;
+            border-radius: 4px;
+            margin: 0 auto;
+        }
+
+        table.qs-table th {
+            background-color: var(--qs-table-header);
+            color: var(--qs-white);
+            font-weight: normal;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            outline: 1px solid var(--qs-border-dark);
+            outline-offset: -1px;
+            white-space: normal;
+            word-break: keep-all;
+            overflow-wrap: break-word;
+            line-height: 1.2;
+            min-width: 80px;
+            vertical-align: middle;
+        }
+
+        .resizer {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 5px;
+            cursor: col-resize;
+            user-select: none;
+            height: 100%;
+        }
+
+        .resizer:hover {
+            border-right: 2px solid #0073bb;
+        }
+
+        .no-wrap {
+            white-space: nowrap !important;
+        }
+
+        table.qs-table th, table.qs-table td {
+            border-right: 1px solid var(--qs-border-dark);
+            border-bottom: 1px solid var(--qs-border-dark);
+            padding: 8px 10px;
+            text-align: center;
+            position: sticky;
+        }
+
+        table.qs-table td {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        table.qs-table th:last-child, table.qs-table td:last-child {
+            border-right: none;
+        }
+        table.qs-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        table.qs-table tr:nth-child(even) { background-color: #fafafa; }
+
+        .row { display: flex; gap: 10px; }
+        .col { flex: 1; }
+
+        canvas {
+            max-width: 100%;
+        }
+        canvas:not([style*="height"]) {
+            height: auto !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <div class="tabs">
+            <div class="tab active" id="tab-sales" onclick="switchTab('sales')">Sales Analysis</div>
+            <div class="tab" id="tab-price" onclick="switchTab('price')">Price Analysis</div>
+            <div class="tab" id="tab-inventory" onclick="switchTab('inventory')">Inventory Analysis</div>
+        </div>
+
+        <div id="content-sales" class="tab-content active">
+            <div class="controls-section">
+                <div class="controls-header" id="controls-header" onclick="toggleControls()">
+                    <span>Controls</span> <span id="controls-icon">&#708;</span>
+                </div>
+                <div class="controls-grid" id="controls-grid">
+                    <div class="control-item">
+                        <label>Start Date</label>
+                        <input type="date" value="2026-01-01">
+                    </div>
+                    <div class="control-item">
+                        <label>End Date</label>
+                        <input type="date" id="endDate" value="2026-03-23">
+                    </div>
+                    <div class="control-item">
+                        <label>Compare to (Start Date)</label>
+                        <input type="date" id="compareStartDate" value="2025-12-01">
+                    </div>
+                    <div class="control-item">
+                        <label>Compare to (End Date)</label>
+                        <input type="date" id="compareEndDate" value="2025-12-31">
+                    </div>
+                    <div class="control-item">
+                        <label>Country</label>
+                        <select><option>US</option><option>CA</option><option>AU</option><option>CN</option></select>
+                    </div>
+                    <div class="control-item">
+                        <label>Category</label>
+                        <select><option>All</option><option>Clothing</option><option>Shoes</option><option>Bag</option><option>Home</option><option>Beauty</option></select>
+                    </div>
+                    <div class="control-item">
+                        <label>Gender</label>
+                        <select><option>All</option><option>Female</option><option>Male</option><option>Unisex</option><option>Kids</option></select>
+                    </div>
+                    <div class="control-item">
+                        <label>Conditions</label>
+                        <select><option>All</option><option>New</option><option>Pre-owned</option></select>
+                    </div>
+                    <div class="control-item">
+                        <label>Brand</label>
+                        <select><option>All</option><option>GUCCI</option><option>PRADA</option><option>Belenciaga</option><option>Valentino</option><option>Burberry</option><option>Chanel</option><option>Dior</option><option>Louis Vuitton</option><option>Hermès</option></select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="main-content">
+                <div class="row" style="gap: 10px;">
+                    <!-- 修复：统一高度为 180px 并使用 flex-direction: column -->
+                    <div class="col" style="flex: 0 0 33.33%; max-width: 33.33%;">
+                        <div class="visual-card" style="padding: 20px; display: flex; flex-direction: column; height: 180px;">
+                            <div style="font-size: 15px; font-weight: bold; color: var(--qs-text-main); margin-bottom: 16px;">Sales</div>
+                            <div style="text-align: center; margin-bottom: 20px;">
+                                <div style="font-size: 32px; font-weight: bold; color: var(--qs-text-main);" id="mainSalesValue">$3,847,290</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 12px; color: var(--qs-text-muted); margin-bottom: 6px;">Compare to (Sales)</div>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="font-size: 18px; font-weight: bold; color: var(--qs-text-main);" id="compareSalesValue">$3,124,560</div>
+                                    <div style="font-size: 18px; font-weight: bold; color: #1d8102;" id="salesChangePercent">+23.1%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 修复：统一高度为 180px -->
+                    <div class="col" style="flex: 0 0 66.66%; max-width: 66.66%;">
+                        <div class="visual-card" style="height: 180px; display: flex; flex-direction: column; padding: 15px;">
+                            <div class="chart-header">
+                                <div class="chart-title">Sales Trend</div>
+                            </div>
+                            <div style="flex: 1; position: relative; min-height: 0;">
+                                <canvas id="salesTrendChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" style="gap: 10px;">
+                    <div class="col" style="flex: 0 0 33.33%; max-width: 33.33%;">
+                        <div class="visual-card" style="padding: 20px; display: flex; flex-direction: column; height: 180px;">
+                            <div style="font-size: 15px; font-weight: bold; color: var(--qs-text-main); margin-bottom: 16px;">Orders</div>
+                            <div style="text-align: center; margin-bottom: 20px;">
+                                <div style="font-size: 32px; font-weight: bold; color: var(--qs-text-main);" id="mainOrderValue">13,456</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 12px; color: var(--qs-text-muted); margin-bottom: 6px;">Compare to (Orders)</div>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="font-size: 18px; font-weight: bold; color: var(--qs-text-main);" id="compareOrderValue">10,892</div>
+                                    <div style="font-size: 18px; font-weight: bold; color: #1d8102;" id="orderChangePercent">+23.5%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col" style="flex: 0 0 66.66%; max-width: 66.66%;">
+                        <div class="visual-card" style="height: 180px; display: flex; flex-direction: column; padding: 15px;">
+                            <div class="chart-header">
+                                <div class="chart-title">Orders Trend</div>
+                            </div>
+                            <div style="flex: 1; position: relative; min-height: 0;">
+                                <canvas id="orderTrendChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" style="gap: 10px;">
+                    <div class="col" style="flex: 0 0 33.33%; max-width: 33.33%;">
+                        <div class="visual-card" style="padding: 20px; display: flex; flex-direction: column; height: 180px;">
+                            <div style="font-size: 15px; font-weight: bold; color: var(--qs-text-main); margin-bottom: 16px;">AOV</div>
+                            <div style="text-align: center; margin-bottom: 20px;">
+                                <div style="font-size: 32px; font-weight: bold; color: var(--qs-text-main);" id="mainAOVValue">$285.50</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 12px; color: var(--qs-text-muted); margin-bottom: 6px;">Compare to (AOV)</div>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="font-size: 18px; font-weight: bold; color: var(--qs-text-main);" id="compareAOVValue">$242.30</div>
+                                    <div style="font-size: 18px; font-weight: bold; color: #1d8102;" id="aovChangePercent">+17.8%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col" style="flex: 0 0 66.66%; max-width: 66.66%;">
+                        <div class="visual-card" style="height: 180px; display: flex; flex-direction: column; padding: 15px;">
+                            <div class="chart-header">
+                                <div class="chart-title">AOV Trend</div>
+                            </div>
+                            <div style="flex: 1; position: relative; min-height: 0;">
+                                <canvas id="aovTrendChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" style="gap: 10px;">
+                    <div class="col" style="flex: 0 0 33.33%; max-width: 33.33%;">
+                        <div class="visual-card" style="padding: 20px; display: flex; flex-direction: column; height: 180px;">
+                            <div style="font-size: 15px; font-weight: bold; color: var(--qs-text-main); margin-bottom: 16px;">Conversion Rate</div>
+                            <div style="text-align: center; margin-bottom: 20px;">
+                                <div style="font-size: 32px; font-weight: bold; color: var(--qs-text-main);" id="mainCRValue">3.45%</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 12px; color: var(--qs-text-muted); margin-bottom: 6px;">Compare to (CR)</div>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="font-size: 18px; font-weight: bold; color: var(--qs-text-main);" id="compareCRValue">2.92%</div>
+                                    <div style="font-size: 18px; font-weight: bold; color: #1d8102;" id="crChangePercent">+18.2%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col" style="flex: 0 0 66.66%; max-width: 66.66%;">
+                        <div class="visual-card" style="height: 180px; display: flex; flex-direction: column; padding: 15px;">
+                            <div class="chart-header">
+                                <div class="chart-title">Conversion Rate Trend</div>
+                            </div>
+                            <div style="flex: 1; position: relative; min-height: 0;">
+                                <canvas id="crTrendChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" style="gap: 10px;">
+                    <div class="col" style="flex: 0 0 33.33%; max-width: 33.33%;">
+                        <div class="visual-card" style="padding: 20px; display: flex; flex-direction: column; height: 180px;">
+                            <div style="font-size: 15px; font-weight: bold; color: var(--qs-text-main); margin-bottom: 16px;">Return Rate</div>
+                            <div style="text-align: center; margin-bottom: 20px;">
+                                <div style="font-size: 32px; font-weight: bold; color: var(--qs-text-main);" id="mainRRValue">2.15%</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 12px; color: var(--qs-text-muted); margin-bottom: 6px;">Compare to (RR)</div>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="font-size: 18px; font-weight: bold; color: var(--qs-text-main);" id="compareRRValue">2.58%</div>
+                                    <div style="font-size: 18px; font-weight: bold; color: #1d8102;" id="rrChangePercent">-16.7%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col" style="flex: 0 0 66.66%; max-width: 66.66%;">
+                        <div class="visual-card" style="height: 180px; display: flex; flex-direction: column; padding: 15px;">
+                            <div class="chart-header">
+                                <div class="chart-title">Return Rate Trend</div>
+                            </div>
+                            <div style="flex: 1; position: relative; min-height: 0;">
+                                <canvas id="rrTrendChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" style="gap: 10px;">
+                    <div class="col" style="flex: 0 0 33.33%; max-width: 33.33%;">
+                        <div class="visual-card" style="padding: 20px; display: flex; flex-direction: column; height: 180px;">
+                            <div style="font-size: 15px; font-weight: bold; color: var(--qs-text-main); margin-bottom: 16px;">Impressions</div>
+                            <div style="text-align: center; margin-bottom: 20px;">
+                                <div style="font-size: 32px; font-weight: bold; color: var(--qs-text-main);" id="mainImpValue">1,245,890</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 12px; color: var(--qs-text-muted); margin-bottom: 6px;">Compare to (Imp)</div>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="font-size: 18px; font-weight: bold; color: var(--qs-text-main);" id="compareImpValue">1,025,340</div>
+                                    <div style="font-size: 18px; font-weight: bold; color: #1d8102;" id="impChangePercent">+21.5%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col" style="flex: 0 0 66.66%; max-width: 66.66%;">
+                        <div class="visual-card" style="height: 180px; display: flex; flex-direction: column; padding: 15px;">
+                            <div class="chart-header">
+                                <div class="chart-title">Impressions Trend</div>
+                            </div>
+                            <div style="flex: 1; position: relative; min-height: 0;">
+                                <canvas id="impTrendChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" style="gap: 10px;">
+                    <div class="col" style="flex: 0 0 33.33%; max-width: 33.33%;">
+                        <div class="visual-card" style="padding: 20px; display: flex; flex-direction: column; height: 180px;">
+                            <div style="font-size: 15px; font-weight: bold; color: var(--qs-text-main); margin-bottom: 16px;">Clicks</div>
+                            <div style="text-align: center; margin-bottom: 20px;">
+                                <div style="font-size: 32px; font-weight: bold; color: var(--qs-text-main);" id="mainClickValue">42,890</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 12px; color: var(--qs-text-muted); margin-bottom: 6px;">Compare to (Clicks)</div>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="font-size: 18px; font-weight: bold; color: var(--qs-text-main);" id="compareClickValue">35,240</div>
+                                    <div style="font-size: 18px; font-weight: bold; color: #1d8102;" id="clickChangePercent">+21.8%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col" style="flex: 0 0 66.66%; max-width: 66.66%;">
+                        <div class="visual-card" style="height: 180px; display: flex; flex-direction: column; padding: 15px;">
+                            <div class="chart-header">
+                                <div class="chart-title">Clicks Trend</div>
+                            </div>
+                            <div style="flex: 1; position: relative; min-height: 0;">
+                                <canvas id="clickTrendChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="content-price" class="tab-content">
+            <div class="controls-section">
+                <div class="controls-header" id="controls-header-price" onclick="toggleControlsPrice()">
+                    <span>Controls</span> <span id="controls-icon-price">&#708;</span>
+                </div>
+                <div class="controls-grid" id="controls-grid-price">
+                    <div class="control-item">
+                        <label>Country</label>
+                        <select><option>US</option><option>CA</option><option>AU</option><option>CN</option></select>
+                    </div>
+                    <div class="control-item">
+                        <label>Category</label>
+                        <select><option>All</option><option>Clothing</option><option>Shoes</option><option>Bag</option><option>Home</option><option>Beauty</option></select>
+                    </div>
+                    <div class="control-item">
+                        <label>Gender</label>
+                        <select><option>All</option><option>Female</option><option>Male</option><option>Unisex</option><option>Kids</option></select>
+                    </div>
+                    <div class="control-item">
+                        <label>Conditions</label>
+                        <select><option>All</option><option>New</option><option>Pre-owned</option></select>
+                    </div>
+                    <div class="control-item">
+                        <label>Comparison Scope</label>
+                        <select><option>Across Competitor Stores</option><option>Across All Modesens Stores</option></select>
+                    </div>
+                    <div class="control-item">
+                        <label>Brand</label>
+                        <select><option>All</option><option>GUCCI</option><option>PRADA</option><option>Belenciaga</option><option>Valentino</option><option>Burberry</option><option>Chanel</option><option>Dior</option><option>Louis Vuitton</option><option>Hermès</option></select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="main-content">
+                <!-- Section 1: Text Box -->
+                <div class="visual-card">
+                    <div class="text-box">My Competitor Stores: </div>
+                </div>
+
+                <!-- Section 1: KPI Cards -->
+                <div class="row">
+                    <div class="col">
+                        <div class="visual-card">
+                            <div class="chart-title">Priced Highest</div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 32px; font-weight: bold; color: #d13212; margin-bottom: 10px;">1,245</div>
+                                <div style="background: #f0f0f0; height: 20px; border-radius: 3px; overflow: hidden;">
+                                    <div style="background: #d13212; height: 100%; width: 28%; display: flex; align-items: center; justify-content: center; color: white; font-size: 11px; font-weight: bold;">28%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="visual-card">
+                            <div class="chart-title">Priced Average</div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 32px; font-weight: bold; color: #879596; margin-bottom: 10px;">2,890</div>
+                                <div style="background: #f0f0f0; height: 20px; border-radius: 3px; overflow: hidden;">
+                                    <div style="background: #879596; height: 100%; width: 65%; display: flex; align-items: center; justify-content: center; color: white; font-size: 11px; font-weight: bold;">65%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="visual-card">
+                            <div class="chart-title">Priced Lowest</div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 32px; font-weight: bold; color: #1d8102; margin-bottom: 10px;">312</div>
+                                <div style="background: #f0f0f0; height: 20px; border-radius: 3px; overflow: hidden;">
+                                    <div style="background: #1d8102; height: 100%; width: 7%; display: flex; align-items: center; justify-content: center; color: white; font-size: 11px; font-weight: bold;">7%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Stacked Bar Charts -->
+                <div class="row">
+                    <div class="col">
+                        <div class="visual-card">
+                            <div class="chart-header">
+                                <div class="chart-title">My Store Product Count by Price Level & Category</div>
+                            </div>
+                            <div style="height: 400px;">
+                                <canvas id="categoryChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="visual-card">
+                            <div class="chart-header">
+                                <div class="chart-title">My Store Product Count by Price Level & Brand</div>
+                            </div>
+                            <div style="position: relative; height: 400px; padding-right: 15px;" id="brandChartWrapper">
+                                <canvas id="brandChart"></canvas>
+                                <div id="customScrollTrack" style="position: absolute; top: 0; right: 0; width: 10px; height: 100%; background: #f1f1f1; border-radius: 5px; box-shadow: inset 0 0 2px rgba(0,0,0,0.1);">
+                                    <div id="customScrollThumb" style="position: absolute; top: 0; left: 0; width: 100%; height: 50%; background: #c1c1c1; border-radius: 5px; cursor: grab; display: flex; flex-direction: column; justify-content: space-between; transition: background 0.2s;">
+                                        <div id="customScrollTopHandle" style="height: 8px; width: 100%; cursor: ns-resize; display: flex; justify-content: center; align-items: center;">
+                                            <div style="width: 6px; height: 2px; background: #fff; border-radius: 1px;"></div>
+                                        </div>
+                                        <div id="customScrollBottomHandle" style="height: 8px; width: 100%; cursor: ns-resize; display: flex; justify-content: center; align-items: center;">
+                                            <div style="width: 6px; height: 2px; background: #fff; border-radius: 1px;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: Product List Table -->
+                <div class="visual-card">
+                    <div class="chart-header">
+                        <div class="chart-title">My Store Product List</div>
+                    </div>
+                    <div class="table-scroll-container">
+                        <table class="qs-table">
+                            <thead>
+                                <tr>
+                                    <th>Product Image</th>
+                                    <th>Product Name</th>
+                                    <th>Brand</th>
+                                    <th>Full Price</th>
+                                    <th>My Store Price</th>
+                                    <th>My Store Discount</th>
+                                    <th>My Store Price Position</th>
+                                    <th>Min Price</th>
+                                    <th>Max Price</th>
+                                    <th>Product Link</th>
+                                    <th>Gender</th>
+                                    <th>Category</th>
+                                    <th>Sub Category</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inventory tab content placeholder -->
+        <div id="content-inventory" class="tab-content">
+            <div class="controls-section">
+                <div class="controls-header" id="controls-header-inventory" onclick="toggleControlsInventory()">
+                    <span>Controls</span> <span id="controls-icon-inventory">&#708;</span>
+                </div>
+                <div class="controls-grid" id="controls-grid-inventory">
+                    <div class="control-item">
+                        <label>Country</label>
+                        <select><option>US</option><option>CA</option><option>AU</option><option>CN</option></select>
+                    </div>
+                    <div class="control-item">
+                        <label>Category</label>
+                        <select><option>All</option><option>Clothing</option><option>Shoes</option><option>Bag</option><option>Home</option><option>Beauty</option></select>
+                    </div>
+                    <div class="control-item">
+                        <label>Gender</label>
+                        <select><option>All</option><option>Female</option><option>Male</option><option>Unisex</option><option>Kids</option></select>
+                    </div>
+                    <div class="control-item">
+                        <label>Conditions</label>
+                        <select><option>All</option><option>New</option><option>Pre-owned</option></select>
+                    </div>
+                    <div class="control-item">
+                        <label>Brand</label>
+                        <select><option>All</option><option>GUCCI</option><option>PRADA</option><option>Belenciaga</option><option>Valentino</option><option>Burberry</option><option>Chanel</option><option>Dior</option><option>Louis Vuitton</option><option>Hermès</option></select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="main-content">
+                <div class="visual-card">
+                    <div class="text-box">My Competitor Stores: Mytheresa, Moda Operandi, Neiman Marcus, SSENSE, Farfetch</div>
+                </div>
+
+                <div class="visual-card">
+                    <div class="section-divider">Inventory Comparison Overview</div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="visual-card">
+                            <div class="chart-header">
+                                <div class="chart-title">In-Stock by Gender</div>
+                            </div>
+                            <div style="height: 400px;">
+                                <canvas id="inventoryGenderChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="visual-card">
+                            <div class="chart-header">
+                                <div class="chart-title">In-Stock by Category</div>
+                            </div>
+                            <div style="height: 400px;">
+                                <canvas id="inventoryCategoryChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="visual-card">
+                            <div class="chart-header">
+                                <div class="chart-title">In-Stock by Brand</div>
+                            </div>
+                            <div style="position: relative; height: 400px; padding-right: 15px;" id="inventoryBrandChartWrapper">
+                                <canvas id="inventoryBrandChart"></canvas>
+                                <div id="inventoryCustomScrollTrack" style="position: absolute; top: 0; right: 0; width: 10px; height: 100%; background: #f1f1f1; border-radius: 5px; box-shadow: inset 0 0 2px rgba(0,0,0,0.1);">
+                                    <div id="inventoryCustomScrollThumb" style="position: absolute; top: 0; left: 0; width: 100%; height: 50%; background: #c1c1c1; border-radius: 5px; cursor: grab; display: flex; flex-direction: column; justify-content: space-between; transition: background 0.2s;">
+                                        <div id="inventoryCustomScrollTopHandle" style="height: 8px; width: 100%; cursor: ns-resize; display: flex; justify-content: center; align-items: center;">
+                                            <div style="width: 6px; height: 2px; background: #fff; border-radius: 1px;"></div>
+                                        </div>
+                                        <div id="inventoryCustomScrollBottomHandle" style="height: 8px; width: 100%; cursor: ns-resize; display: flex; justify-content: center; align-items: center;">
+                                            <div style="width: 6px; height: 2px; background: #fff; border-radius: 1px;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="visual-card">
+                    <div class="section-divider">Overlapping Assortment</div>
+                </div>
+
+                <div class="row">
+                    <div class="col" style="flex: 0 0 33.33%; max-width: 33.33%;">
+                        <div class="visual-card">
+                            <div class="chart-header">
+                                <div class="chart-title">Shared Brand Summary</div>
+                            </div>
+                            <div class="table-scroll-container">
+                                <table class="qs-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Brand</th>
+                                            <th>My Store In-Stock Count</th>
+                                            <th>Competitor Count</th>
+                                            <th>Total In-Stock Count</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="overlapBrandTableBody">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col" style="flex: 0 0 66.66%; max-width: 66.66%;">
+                        <div class="visual-card">
+                            <div class="chart-header">
+                                <div class="chart-title">Overlapping Products</div>
+                            </div>
+                            <div class="table-scroll-container">
+                                <table class="qs-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Product Image</th>
+                                            <th>Product Name</th>
+                                            <th>Brand</th>
+                                            <th>Full Price</th>
+                                            <th>My Store Price</th>
+                                            <th>My Store Discount</th>
+                                            <th>My Store Price Position</th>
+                                            <th>Number of Competitor Stores</th>
+                                            <th>Min Price</th>
+                                            <th>Max Price</th>
+                                            <th>Product Link</th>
+                                            <th>Gender</th>
+                                            <th>Category</th>
+                                            <th>Sub Category</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="overlapProductTableBody">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="visual-card">
+                    <div class="section-divider">Assortment Gaps</div>
+                </div>
+
+                <div class="row">
+                    <div class="col" style="flex: 0 0 33.33%; max-width: 33.33%;">
+                        <div class="visual-card">
+                            <div class="chart-header">
+                                <div class="chart-title">Brand Gap Summary</div>
+                            </div>
+                            <div class="table-scroll-container">
+                                <table class="qs-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Brand</th>
+                                            <th>Competitor Count</th>
+                                            <th>Competitor In-Stock Count</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="outOfStockBrandTableBody">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col" style="flex: 0 0 66.66%; max-width: 66.66%;">
+                        <div class="visual-card">
+                            <div class="chart-header">
+                                <div class="chart-title">Missing Products</div>
+                            </div>
+                            <div class="table-scroll-container">
+                                <table class="qs-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Product Image</th>
+                                            <th>Product Name</th>
+                                            <th>Brand</th>
+                                            <th>Number of Competitor Stores</th>
+                                            <th>Full Price</th>
+                                            <th>Min Price</th>
+                                            <th>Max Price</th>
+                                            <th>Product Link</th>
+                                            <th>Gender</th>
+                                            <th>Category</th>
+                                            <th>Sub Category</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="outOfStockProductTableBody">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="visual-card">
+                    <div class="section-divider">Exclusively Assortment</div>
+                </div>
+
+                <div class="row">
+                    <div class="col" style="flex: 0 0 33.33%; max-width: 33.33%;">
+                        <div class="visual-card">
+                            <div class="chart-header">
+                                <div class="chart-title">Exclusive Brand Summary</div>
+                            </div>
+                            <div class="table-scroll-container">
+                                <table class="qs-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Brand</th>
+                                            <th>My Store In-stock Count</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="exclusivelyBrandTableBody">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col" style="flex: 0 0 66.66%; max-width: 66.66%;">
+                        <div class="visual-card">
+                            <div class="chart-header">
+                                <div class="chart-title">Unique Product List</div>
+                            </div>
+                            <div class="table-scroll-container">
+                                <table class="qs-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Product Image</th>
+                                            <th>Product Name</th>
+                                            <th>Brand</th>
+                                            <th>Full Price</th>
+                                            <th>My Store Price</th>
+                                            <th>My Store Discount</th>
+                                            <th>Product Link</th>
+                                            <th>Gender</th>
+                                            <th>Category</th>
+                                            <th>Sub Category</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="exclusivelyProductTableBody">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById('tab-' + tabName).classList.add('active');
+            const content = document.getElementById('content-' + tabName);
+            if(content) content.classList.add('active');
+        }
+        function toggleControls() {
+            document.getElementById('controls-grid').classList.toggle('collapsed');
+            document.getElementById('controls-icon').classList.toggle('collapsed');
+            document.getElementById('controls-header').classList.toggle('collapsed');
+        }
+        function toggleControlsPrice() {
+            document.getElementById('controls-grid-price').classList.toggle('collapsed');
+            document.getElementById('controls-icon-price').classList.toggle('collapsed');
+            document.getElementById('controls-header-price').classList.toggle('collapsed');
+        }
+        function toggleControlsInventory() {
+            document.getElementById('controls-grid-inventory').classList.toggle('collapsed');
+            document.getElementById('controls-icon-inventory').classList.toggle('collapsed');
+            document.getElementById('controls-header-inventory').classList.toggle('collapsed');
+        }
+
+        function updateKPICard() {
+            const mainSales = 3847290;
+            const compareSales = 3124560;
+            const changePercent = ((mainSales - compareSales) / compareSales * 100).toFixed(1);
+            const changeColor = changePercent >= 0 ? '#1d8102' : '#d32f2f';
+            const changeSign = changePercent >= 0 ? '+' : '';
+
+            document.getElementById('mainSalesValue').textContent = '$' + mainSales.toLocaleString();
+            document.getElementById('compareSalesValue').textContent = '$' + compareSales.toLocaleString();
+
+            const changeElem = document.getElementById('salesChangePercent');
+            changeElem.textContent = changeSign + changePercent + '%';
+            changeElem.style.color = changeColor;
+        }
+
+        function updateTab2CompetitorText() {
+            const priceControls = document.getElementById('controls-grid-price');
+            const comparisonScopeSelect = Array.from(priceControls.querySelectorAll('.control-item')).find(item =>
+                item.querySelector('label')?.textContent === 'Comparison Scope'
+            )?.querySelector('select');
+            if (!comparisonScopeSelect) return;
+            const textBox = document.querySelector('#content-price .text-box');
+            if (!textBox) return;
+            const selectedValue = comparisonScopeSelect.value;
+            let storeText = '';
+            if (selectedValue.includes('Competitor')) {
+                storeText = 'Mytheresa, Moda Operandi, Neiman Marcus, SSENSE, Farfetch';
+            } else if (selectedValue.includes('All')) {
+                storeText = 'All Modesens Stores';
+            }
+            textBox.textContent = `My Competitor Stores: ${storeText}`;
+        }
+
+        const getStepSize = (max) => {
+            const magnitude = Math.pow(10, Math.floor(Math.log10(max)));
+            const normalized = max / magnitude;
+            if (normalized <= 2) return magnitude / 2;
+            if (normalized <= 5) return magnitude;
+            return magnitude * 2;
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateKPICard();
+
+            // AOV Trend Chart Initialization
+            const aovCtx = document.getElementById('aovTrendChart').getContext('2d');
+            new Chart(aovCtx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: 24}, (_, i) => `2026-01-${i+1}`),
+                    datasets: [{
+                        label: 'Daily AOV',
+                        data: [215, 228, 235, 242, 248, 255, 262, 268, 275, 282, 288, 295, 302, 308, 315, 322, 328, 335, 342, 348, 355, 362, 368, 375].map(v => v),
+                        borderColor: '#0073bb',
+                        backgroundColor: 'rgba(0, 115, 187, 0.05)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: {
+                            ticks: {
+                                maxRotation: 0,
+                                minRotation: 0,
+                                callback: function(value, index) {
+                                    return index % 3 === 0 ? this.getLabelForValue(value) : '';
+                                }
+                            }
+                        },
+                        y: { ticks: { callback: v => '$' + v } }
+                    }
+                }
+            });
+
+            // Conversion Rate Trend Chart Initialization
+            const crCtx = document.getElementById('crTrendChart').getContext('2d');
+            new Chart(crCtx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: 24}, (_, i) => `2026-01-${i+1}`),
+                    datasets: [{
+                        label: 'Daily CR',
+                        data: [2.15, 2.28, 2.35, 2.42, 2.48, 2.55, 2.62, 2.68, 2.75, 2.82, 2.88, 2.95, 3.02, 3.08, 3.15, 3.22, 3.28, 3.35, 3.42, 3.48, 3.55, 3.62, 3.68, 3.75],
+                        borderColor: '#0073bb',
+                        backgroundColor: 'rgba(0, 115, 187, 0.05)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: {
+                            ticks: {
+                                maxRotation: 0,
+                                minRotation: 0,
+                                callback: function(value, index) {
+                                    return index % 3 === 0 ? this.getLabelForValue(value) : '';
+                                }
+                            }
+                        },
+                        y: { ticks: { callback: v => v.toFixed(2) + '%' } }
+                    }
+                }
+            });
+
+            // Return Rate Trend Chart
+            const rrCtx = document.getElementById('rrTrendChart').getContext('2d');
+            new Chart(rrCtx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: 24}, (_, i) => `2026-01-${i+1}`),
+                    datasets: [{
+                        label: 'Daily RR',
+                        data: [2.85, 2.78, 2.72, 2.65, 2.58, 2.52, 2.45, 2.38, 2.32, 2.25, 2.18, 2.12, 2.05, 1.98, 1.92, 1.85, 1.78, 1.72, 1.65, 1.58, 1.52, 1.45, 1.38, 1.32],
+                        borderColor: '#0073bb',
+                        backgroundColor: 'rgba(0, 115, 187, 0.05)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: {
+                            ticks: {
+                                maxRotation: 0,
+                                minRotation: 0,
+                                callback: function(value, index) {
+                                    return index % 3 === 0 ? this.getLabelForValue(value) : '';
+                                }
+                            }
+                        },
+                        y: { ticks: { callback: v => v.toFixed(2) + '%' } }
+                    }
+                }
+            });
+
+            // Impressions Trend Chart
+            const impCtx = document.getElementById('impTrendChart').getContext('2d');
+            new Chart(impCtx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: 24}, (_, i) => `2026-01-${i+1}`),
+                    datasets: [{
+                        label: 'Daily Impressions',
+                        data: [850000, 875000, 895000, 920000, 945000, 970000, 995000, 1020000, 1045000, 1070000, 1095000, 1120000, 1145000, 1170000, 1195000, 1220000, 1245000, 1270000, 1295000, 1320000, 1345000, 1370000, 1395000, 1420000],
+                        borderColor: '#0073bb',
+                        backgroundColor: 'rgba(0, 115, 187, 0.05)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: {
+                            ticks: {
+                                maxRotation: 0,
+                                minRotation: 0,
+                                callback: function(value, index) {
+                                    return index % 3 === 0 ? this.getLabelForValue(value) : '';
+                                }
+                            }
+                        },
+                        y: { ticks: { callback: v => (v/1000000).toFixed(1) + 'M' } }
+                    }
+                }
+            });
+
+            // Clicks Trend Chart
+            const clickCtx = document.getElementById('clickTrendChart').getContext('2d');
+            new Chart(clickCtx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: 24}, (_, i) => `2026-01-${i+1}`),
+                    datasets: [{
+                        label: 'Daily Clicks',
+                        data: [28500, 29250, 30100, 31000, 31900, 32800, 33700, 34600, 35500, 36400, 37300, 38200, 39100, 40000, 40900, 41800, 42700, 43600, 44500, 45400, 46300, 47200, 48100, 49000],
+                        borderColor: '#0073bb',
+                        backgroundColor: 'rgba(0, 115, 187, 0.05)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: {
+                            ticks: {
+                                maxRotation: 0,
+                                minRotation: 0,
+                                callback: function(value, index) {
+                                    return index % 3 === 0 ? this.getLabelForValue(value) : '';
+                                }
+                            }
+                        },
+                        y: { ticks: { callback: v => (v/1000).toFixed(0) + 'K' } }
+                    }
+                }
+            });
+
+            // Orders Trend Chart
+            const orderCtx = document.getElementById('orderTrendChart').getContext('2d');
+            new Chart(orderCtx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: 24}, (_, i) => `2026-01-${i+1}`),
+                    datasets: [{
+                        label: 'Daily Orders',
+                        data: [8900, 9150, 9400, 9650, 9900, 10150, 10400, 10650, 10900, 11150, 11400, 11650, 11900, 12150, 12400, 12650, 12900, 13150, 13400, 13650, 13900, 14150, 14400, 14650],
+                        borderColor: '#0073bb',
+                        backgroundColor: 'rgba(0, 115, 187, 0.05)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: {
+                            ticks: {
+                                maxRotation: 0,
+                                minRotation: 0,
+                                callback: function(value, index) {
+                                    return index % 3 === 0 ? this.getLabelForValue(value) : '';
+                                }
+                            }
+                        },
+                        y: { ticks: { callback: v => (v/1000).toFixed(0) + 'K' } }
+                    }
+                }
+            });
+
+            // Sales Trend Chart Initialization
+            const ctx = document.getElementById('salesTrendChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: 24}, (_, i) => `2026-01-${i+1}`),
+                    datasets: [{
+                        label: 'Daily Sales',
+                        data: [125, 138, 142, 135, 155, 168, 172, 165, 178, 185, 192, 198, 205, 215, 225, 232, 240, 248, 255, 262, 270, 278, 285, 285].map(v => v * 1000),
+                        borderColor: '#0073bb',
+                        backgroundColor: 'rgba(0, 115, 187, 0.05)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: {
+                            ticks: {
+                                maxRotation: 0,
+                                minRotation: 0,
+                                callback: function(value, index) {
+                                    return index % 3 === 0 ? this.getLabelForValue(value) : '';
+                                }
+                            }
+                        },
+                        y: { ticks: { callback: v => '$' + (v/1000) + 'K' } }
+                    }
+                }
+            });
+
+            // Product Table Body
+            const productData = [
+                { img: '/assets/100*100.svg', name: 'Classic Leather Handbag', brand: 'Gucci', fullPrice: 2800, myPrice: 2240, discount: '20%', priceType: 'Highest', minPrice: 1950, maxPrice: 3200, gender: 'Female', category: 'Bag', subCategory: 'Handbag' },
+                { img: '/assets/100*100.svg', name: 'Silk Evening Dress', brand: 'Prada', fullPrice: 3500, myPrice: 2625, discount: '25%', priceType: 'Average', minPrice: 2800, maxPrice: 4200, gender: 'Female', category: 'Clothing', subCategory: 'Dress' },
+                { img: '/assets/100*100.svg', name: 'Designer Sneakers', brand: 'Chanel', fullPrice: 1200, myPrice: 960, discount: '20%', priceType: 'Lowest', minPrice: 850, maxPrice: 1500, gender: 'Unisex', category: 'Shoes', subCategory: 'Sneaker' },
+                { img: '/assets/100*100.svg', name: 'Luxury Watch', brand: 'Dior', fullPrice: 5000, myPrice: 4000, discount: '20%', priceType: 'Highest', minPrice: 3500, maxPrice: 6000, gender: 'Unisex', category: 'Accessories', subCategory: 'Watch' },
+                { img: '/assets/100*100.svg', name: 'Premium Sunglasses', brand: 'Louis Vuitton', fullPrice: 450, myPrice: 337, discount: '25%', priceType: 'Average', minPrice: 380, maxPrice: 550, gender: 'Unisex', category: 'Accessories', subCategory: 'Eyewear' },
+                { img: '/assets/100*100.svg', name: 'Cashmere Sweater', brand: 'Hermès', fullPrice: 1800, myPrice: 1440, discount: '20%', priceType: 'Lowest', minPrice: 1200, maxPrice: 2100, gender: 'Female', category: 'Clothing', subCategory: 'Sweater' },
+                { img: '/assets/100*100.svg', name: 'Wool Coat', brand: 'Balenciaga', fullPrice: 2200, myPrice: 1650, discount: '25%', priceType: 'Highest', minPrice: 1800, maxPrice: 2800, gender: 'Female', category: 'Clothing', subCategory: 'Coat' },
+                { img: '/assets/100*100.svg', name: 'Crossbody Bag', brand: 'Saint Laurent', fullPrice: 1950, myPrice: 1462, discount: '25%', priceType: 'Average', minPrice: 1600, maxPrice: 2400, gender: 'Female', category: 'Bag', subCategory: 'Crossbody' },
+                { img: '/assets/100*100.svg', name: 'High Heels', brand: 'Valentino', fullPrice: 1100, myPrice: 880, discount: '20%', priceType: 'Lowest', minPrice: 750, maxPrice: 1400, gender: 'Female', category: 'Shoes', subCategory: 'Heels' },
+                { img: '/assets/100*100.svg', name: 'Leather Belt', brand: 'Bottega Veneta', fullPrice: 650, myPrice: 487, discount: '25%', priceType: 'Highest', minPrice: 550, maxPrice: 800, gender: 'Unisex', category: 'Accessories', subCategory: 'Belt' },
+                { img: '/assets/100*100.svg', name: 'Perfume 100ml', brand: 'Fendi', fullPrice: 280, myPrice: 210, discount: '25%', priceType: 'Average', minPrice: 220, maxPrice: 350, gender: 'Female', category: 'Beauty', subCategory: 'Fragrance' },
+                { img: '/assets/100*100.svg', name: 'Silk Scarf', brand: 'Givenchy', fullPrice: 380, myPrice: 285, discount: '25%', priceType: 'Lowest', minPrice: 300, maxPrice: 480, gender: 'Female', category: 'Accessories', subCategory: 'Scarf' },
+                { img: '/assets/100*100.svg', name: 'Denim Jeans', brand: 'Burberry', fullPrice: 850, myPrice: 637, discount: '25%', priceType: 'Highest', minPrice: 700, maxPrice: 1050, gender: 'Unisex', category: 'Clothing', subCategory: 'Jeans' },
+                { img: '/assets/100*100.svg', name: 'Tote Bag', brand: 'Celine', fullPrice: 1600, myPrice: 1200, discount: '25%', priceType: 'Average', minPrice: 1300, maxPrice: 1900, gender: 'Female', category: 'Bag', subCategory: 'Tote' },
+                { img: '/assets/100*100.svg', name: 'Loafers', brand: 'Loewe', fullPrice: 950, myPrice: 712, discount: '25%', priceType: 'Lowest', minPrice: 800, maxPrice: 1200, gender: 'Male', category: 'Shoes', subCategory: 'Loafers' }
+            ];
+            const tbody = document.getElementById('productTableBody');
+            productData.forEach(p => {
+                const row = tbody.insertRow();
+                row.innerHTML = `<td><div class="qs-img-placeholder">N/A</div></td><td>${p.name}</td><td>${p.brand}</td><td>$${p.fullPrice}</td><td>$${p.myPrice}</td><td>${p.discount}</td><td>${p.priceType}</td><td>$${p.minPrice}</td><td>$${p.maxPrice}</td><td><a href="https://www.modesens.com" target="_blank" style="color: #0073bb; text-decoration: none;">Link</a></td><td>${p.gender}</td><td>${p.category}</td><td>${p.subCategory}</td>`;
+            });
+
+            // Category Chart
+            const categoryData = [
+                { name: 'Clothing', highest: 145, average: 680, lowest: 85 },
+                { name: 'Shoes', highest: 132, average: 565, lowest: 72 },
+                { name: 'Bag', highest: 298, average: 890, lowest: 95 },
+                { name: 'Beauty', highest: 89, average: 425, lowest: 38 },
+                { name: 'Home', highest: 67, average: 330, lowest: 22 }
+            ].map(d => ({ ...d, total: d.highest + d.average + d.lowest })).sort((a, b) => b.total - a.total);
+            const categoryMax = Math.max(...categoryData.map(d => d.total));
+            new Chart(document.getElementById('categoryChart'), {
+                type: 'bar',
+                data: {
+                    labels: categoryData.map(d => d.name),
+                    datasets: [
+                        { label: 'Priced Highest', data: categoryData.map(d => d.highest), backgroundColor: '#d13212' },
+                        { label: 'Priced Average', data: categoryData.map(d => d.average), backgroundColor: '#879596' },
+                        { label: 'Priced Lowest', data: categoryData.map(d => d.lowest), backgroundColor: '#1d8102' }
+                    ]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 }}}},
+                    scales: {
+                        x: { stacked: true, beginAtZero: true, ticks: { stepSize: getStepSize(categoryMax) }},
+                        y: { stacked: true }
+                    }
+                }
+            });
+
+            // Brand Chart
+            const brandData = [
+                { name: 'Gucci', highest: 89, average: 245, lowest: 32 },
+                { name: 'Prada', highest: 82, average: 238, lowest: 28 },
+                { name: 'Chanel', highest: 95, average: 252, lowest: 35 },
+                { name: 'Dior', highest: 78, average: 228, lowest: 25 },
+                { name: 'Louis Vuitton', highest: 92, average: 248, lowest: 33 },
+                { name: 'Hermès', highest: 105, average: 268, lowest: 38 },
+                { name: 'Balenciaga', highest: 72, average: 218, lowest: 22 },
+                { name: 'Saint Laurent', highest: 68, average: 212, lowest: 20 },
+                { name: 'Valentino', highest: 75, average: 225, lowest: 24 },
+                { name: 'Bottega Veneta', highest: 70, average: 215, lowest: 21 },
+                { name: 'Fendi', highest: 65, average: 205, lowest: 19 },
+                { name: 'Givenchy', highest: 62, average: 198, lowest: 18 },
+                { name: 'Burberry', highest: 58, average: 188, lowest: 16 },
+                { name: 'Celine', highest: 55, average: 182, lowest: 15 },
+                { name: 'Loewe', highest: 52, average: 175, lowest: 14 },
+                { name: 'Alexander McQueen', highest: 48, average: 168, lowest: 13 },
+                { name: 'Versace', highest: 45, average: 162, lowest: 12 },
+                { name: 'Dolce & Gabbana', highest: 42, average: 155, lowest: 11 },
+                { name: 'Miu Miu', highest: 38, average: 148, lowest: 10 },
+                { name: 'Off-White', highest: 35, average: 142, lowest: 9 }
+            ].map(d => ({ ...d, total: d.highest + d.average + d.lowest })).sort((a, b) => b.total - a.total);
+            const brandMax = Math.max(...brandData.map(d => d.total));
+            const brandChartInstance = new Chart(document.getElementById('brandChart'), {
+                type: 'bar',
+                data: {
+                    labels: brandData.map(d => d.name),
+                    datasets: [
+                        { label: 'Priced Highest', data: brandData.map(d => d.highest), backgroundColor: '#d13212' },
+                        { label: 'Priced Average', data: brandData.map(d => d.average), backgroundColor: '#879596' },
+                        { label: 'Priced Lowest', data: brandData.map(d => d.lowest), backgroundColor: '#1d8102' }
+                    ]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 }}}},
+                    scales: {
+                        x: { stacked: true, beginAtZero: true, ticks: { stepSize: getStepSize(brandMax) }},
+                        y: { stacked: true }
+                    }
+                }
+            });
+
+            // Brand chart scroll bar
+            const track = document.getElementById('customScrollTrack');
+            const thumb = document.getElementById('customScrollThumb');
+            const topHandle = document.getElementById('customScrollTopHandle');
+            const bottomHandle = document.getElementById('customScrollBottomHandle');
+            const wrapper = document.getElementById('brandChartWrapper');
+
+            if (track && thumb && topHandle && bottomHandle) {
+                let totalItems = brandData.length;
+                let viewStart = 0;
+                let viewEnd = 9;
+                let isDragging = false;
+                let dragType = '';
+                let startY = 0;
+                let initialStart = 0;
+                let initialEnd = 0;
+
+                function updateChartAndView() {
+                    if (viewStart < 0) viewStart = 0;
+                    if (viewEnd >= totalItems) viewEnd = totalItems - 1;
+                    if (viewStart > viewEnd - 1) viewStart = viewEnd - 1;
+
+                    brandChartInstance.options.scales.y.min = viewStart;
+                    brandChartInstance.options.scales.y.max = viewEnd;
+                    brandChartInstance.update();
+
+                    const trackHeight = track.clientHeight;
+                    const thumbTop = (viewStart / totalItems) * trackHeight;
+                    const thumbHeight = ((viewEnd - viewStart + 1) / totalItems) * trackHeight;
+
+                    thumb.style.top = `${thumbTop}px`;
+                    thumb.style.height = `${thumbHeight}px`;
+                }
+
+                updateChartAndView();
+
+                function onMouseDown(e, type) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    isDragging = true;
+                    dragType = type;
+                    startY = e.clientY;
+                    initialStart = viewStart;
+                    initialEnd = viewEnd;
+                    document.addEventListener('mousemove', onMouseMove);
+                    document.addEventListener('mouseup', onMouseUp);
+                }
+
+                thumb.addEventListener('mousedown', (e) => onMouseDown(e, 'pan'));
+                topHandle.addEventListener('mousedown', (e) => onMouseDown(e, 'zoomTop'));
+                bottomHandle.addEventListener('mousedown', (e) => onMouseDown(e, 'zoomBottom'));
+
+                function onMouseMove(e) {
+                    if (!isDragging) return;
+                    const deltaY = e.clientY - startY;
+                    const trackHeight = track.clientHeight;
+                    const deltaItems = (deltaY / trackHeight) * totalItems;
+
+                    if (dragType === 'pan') {
+                        const shift = Math.round(deltaItems);
+                        let newStart = initialStart + shift;
+                        let newEnd = initialEnd + shift;
+                        if (newStart < 0) { newStart = 0; newEnd = initialEnd - initialStart; }
+                        if (newEnd >= totalItems) { newEnd = totalItems - 1; newStart = totalItems - 1 - (initialEnd - initialStart); }
+                        viewStart = newStart;
+                        viewEnd = newEnd;
+                    } else if (dragType === 'zoomTop') {
+                        viewStart = Math.round(initialStart + deltaItems);
+                        if (viewStart > viewEnd - 1) viewStart = viewEnd - 1;
+                        if (viewStart < 0) viewStart = 0;
+                    } else if (dragType === 'zoomBottom') {
+                        viewEnd = Math.round(initialEnd + deltaItems);
+                        if (viewEnd < viewStart + 1) viewEnd = viewStart + 1;
+                        if (viewEnd >= totalItems) viewEnd = totalItems - 1;
+                    }
+                    updateChartAndView();
+                }
+
+                function onMouseUp() {
+                    isDragging = false;
+                    document.removeEventListener('mousemove', onMouseMove);
+                    document.removeEventListener('mouseup', onMouseUp);
+                }
+
+                wrapper.addEventListener('wheel', (e) => {
+                    e.preventDefault();
+                    const shift = e.deltaY > 0 ? 1 : -1;
+                    if (viewStart + shift >= 0 && viewEnd + shift < totalItems) {
+                        viewStart += shift;
+                        viewEnd += shift;
+                        updateChartAndView();
+                    }
+                });
+            }
+
+            // Update competitor text on load
+            const priceControls = document.getElementById('controls-grid-price');
+            const comparisonScopeSelect = Array.from(priceControls.querySelectorAll('.control-item')).find(item =>
+                item.querySelector('label')?.textContent === 'Comparison Scope'
+            )?.querySelector('select');
+            if (comparisonScopeSelect) {
+                comparisonScopeSelect.addEventListener('change', updateTab2CompetitorText);
+                updateTab2CompetitorText();
+            }
+
+            // Inventory Charts
+            const inventoryGenderData = [
+                { name: 'Female', myStore: 450, competitors: 520 },
+                { name: 'Unisex', myStore: 280, competitors: 350 },
+                { name: 'Male', myStore: 380, competitors: 420 },
+                { name: 'Kids', myStore: 135, competitors: 180 }
+            ].sort((a, b) => (b.myStore + b.competitors) - (a.myStore + a.competitors));
+
+            new Chart(document.getElementById('inventoryGenderChart'), {
+                type: 'bar',
+                data: {
+                    labels: inventoryGenderData.map(d => d.name),
+                    datasets: [
+                        { label: 'Competitor Stores', data: inventoryGenderData.map(d => d.competitors), backgroundColor: '#3b8ea5' },
+                        { label: 'My Store', data: inventoryGenderData.map(d => d.myStore), backgroundColor: '#f49e4c' }
+                    ]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 }}}},
+                    scales: { x: { stacked: true, beginAtZero: true }, y: { stacked: true } }
+                }
+            });
+
+            const inventoryCategoryData = [
+                { name: 'Clothing', myStore: 580, competitors: 650 },
+                { name: 'Shoes', myStore: 420, competitors: 480 },
+                { name: 'Bag', myStore: 350, competitors: 420 },
+                { name: 'Beauty', myStore: 180, competitors: 220 },
+                { name: 'Home', myStore: 120, competitors: 150 }
+            ].sort((a, b) => (b.myStore + b.competitors) - (a.myStore + a.competitors));
+
+            new Chart(document.getElementById('inventoryCategoryChart'), {
+                type: 'bar',
+                data: {
+                    labels: inventoryCategoryData.map(d => d.name),
+                    datasets: [
+                        { label: 'Competitor Stores', data: inventoryCategoryData.map(d => d.competitors), backgroundColor: '#3b8ea5' },
+                        { label: 'My Store', data: inventoryCategoryData.map(d => d.myStore), backgroundColor: '#f49e4c' }
+                    ]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 }}}},
+                    scales: { x: { stacked: true, beginAtZero: true }, y: { stacked: true } }
+                }
+            });
+
+            const inventoryBrandData = [
+                { name: 'Hermès', myStore: 112, competitors: 140 },
+                { name: 'Chanel', myStore: 102, competitors: 130 },
+                { name: 'Louis Vuitton', myStore: 98, competitors: 125 },
+                { name: 'Gucci', myStore: 95, competitors: 120 },
+                { name: 'Prada', myStore: 88, competitors: 110 },
+                { name: 'Dior', myStore: 85, competitors: 105 },
+                { name: 'Valentino', myStore: 80, competitors: 100 },
+                { name: 'Balenciaga', myStore: 78, competitors: 95 },
+                { name: 'Saint Laurent', myStore: 72, competitors: 88 },
+                { name: 'Burberry', myStore: 65, competitors: 82 },
+                { name: 'Fendi', myStore: 62, competitors: 78 },
+                { name: 'Givenchy', myStore: 58, competitors: 72 },
+                { name: 'Celine', myStore: 55, competitors: 68 },
+                { name: 'Loewe', myStore: 52, competitors: 65 },
+                { name: 'Alexander McQueen', myStore: 48, competitors: 60 },
+                { name: 'Versace', myStore: 45, competitors: 56 },
+                { name: 'Dolce & Gabbana', myStore: 42, competitors: 52 },
+                { name: 'Miu Miu', myStore: 38, competitors: 48 },
+                { name: 'Off-White', myStore: 35, competitors: 44 },
+                { name: 'Bottega Veneta', myStore: 70, competitors: 85 }
+            ].sort((a, b) => (b.myStore + b.competitors) - (a.myStore + a.competitors));
+
+            const invChartInstance = new Chart(document.getElementById('inventoryBrandChart'), {
+                type: 'bar',
+                data: {
+                    labels: inventoryBrandData.map(d => d.name),
+                    datasets: [
+                        { label: 'Competitor Stores', data: inventoryBrandData.map(d => d.competitors), backgroundColor: '#3b8ea5' },
+                        { label: 'My Store', data: inventoryBrandData.map(d => d.myStore), backgroundColor: '#f49e4c' }
+                    ]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 }}}},
+                    scales: { x: { stacked: true, beginAtZero: true }, y: { stacked: true } }
+                }
+            });
+
+            // Inventory Brand scroll bar
+            const invTrack = document.getElementById('inventoryCustomScrollTrack');
+            const invThumb = document.getElementById('inventoryCustomScrollThumb');
+            const invTopHandle = document.getElementById('inventoryCustomScrollTopHandle');
+            const invBottomHandle = document.getElementById('inventoryCustomScrollBottomHandle');
+            const invWrapper = document.getElementById('inventoryBrandChartWrapper');
+
+            if (invTrack && invThumb && invTopHandle && invBottomHandle) {
+                let invTotalItems = 20;
+                let invViewStart = 0;
+                let invViewEnd = 9;
+                let invIsDragging = false;
+                let invDragType = '';
+                let invStartY = 0;
+                let invInitialStart = 0;
+                let invInitialEnd = 0;
+
+                function updateInvChartAndView() {
+                    if (!invChartInstance) return;
+                    if (invViewStart < 0) invViewStart = 0;
+                    if (invViewEnd >= invTotalItems) invViewEnd = invTotalItems - 1;
+                    if (invViewStart > invViewEnd - 1) invViewStart = invViewEnd - 1;
+
+                    invChartInstance.options.scales.y.min = invViewStart;
+                    invChartInstance.options.scales.y.max = invViewEnd;
+                    invChartInstance.update();
+
+                    const trackHeight = invTrack.clientHeight;
+                    const thumbTop = (invViewStart / invTotalItems) * trackHeight;
+                    const thumbHeight = ((invViewEnd - invViewStart + 1) / invTotalItems) * trackHeight;
+
+                    invThumb.style.top = `${thumbTop}px`;
+                    invThumb.style.height = `${thumbHeight}px`;
+                }
+
+                updateInvChartAndView();
+
+                function onInvMouseDown(e, type) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    invIsDragging = true;
+                    invDragType = type;
+                    invStartY = e.clientY;
+                    invInitialStart = invViewStart;
+                    invInitialEnd = invViewEnd;
+                    document.addEventListener('mousemove', onInvMouseMove);
+                    document.addEventListener('mouseup', onInvMouseUp);
+                }
+
+                invThumb.addEventListener('mousedown', (e) => onInvMouseDown(e, 'pan'));
+                invTopHandle.addEventListener('mousedown', (e) => onInvMouseDown(e, 'zoomTop'));
+                invBottomHandle.addEventListener('mousedown', (e) => onInvMouseDown(e, 'zoomBottom'));
+
+                function onInvMouseMove(e) {
+                    if (!invIsDragging) return;
+                    const deltaY = e.clientY - invStartY;
+                    const trackHeight = invTrack.clientHeight;
+                    const deltaItems = (deltaY / trackHeight) * invTotalItems;
+
+                    if (invDragType === 'pan') {
+                        const shift = Math.round(deltaItems);
+                        let newStart = invInitialStart + shift;
+                        let newEnd = invInitialEnd + shift;
+                        if (newStart < 0) { newStart = 0; newEnd = invInitialEnd - invInitialStart; }
+                        if (newEnd >= invTotalItems) { newEnd = invTotalItems - 1; newStart = invTotalItems - 1 - (invInitialEnd - invInitialStart); }
+                        invViewStart = newStart;
+                        invViewEnd = newEnd;
+                    } else if (invDragType === 'zoomTop') {
+                        invViewStart = Math.round(invInitialStart + deltaItems);
+                        if (invViewStart > invViewEnd - 1) invViewStart = invViewEnd - 1;
+                        if (invViewStart < 0) invViewStart = 0;
+                    } else if (invDragType === 'zoomBottom') {
+                        invViewEnd = Math.round(invInitialEnd + deltaItems);
+                        if (invViewEnd < invViewStart + 1) invViewEnd = invViewStart + 1;
+                        if (invViewEnd >= invTotalItems) invViewEnd = invTotalItems - 1;
+                    }
+                    updateInvChartAndView();
+                }
+
+                function onInvMouseUp() {
+                    invIsDragging = false;
+                    document.removeEventListener('mousemove', onInvMouseMove);
+                    document.removeEventListener('mouseup', onInvMouseUp);
+                }
+
+                invWrapper.addEventListener('wheel', (e) => {
+                    e.preventDefault();
+                    const shift = e.deltaY > 0 ? 1 : -1;
+                    if (invViewStart + shift >= 0 && invViewEnd + shift < invTotalItems) {
+                        invViewStart += shift;
+                        invViewEnd += shift;
+                        updateInvChartAndView();
+                    }
+                });
+            }
+
+            // Overlap Brand data
+            const overlapBrandData = [
+                { brand: 'Hermès', myStore: 245, competitors: 5, total: 892 },
+                { brand: 'Chanel', competitors: 5, myStore: 235, total: 856 },
+                { brand: 'Louis Vuitton', competitors: 4, myStore: 225, total: 823 },
+                { brand: 'Gucci', competitors: 4, myStore: 215, total: 798 },
+                { brand: 'Prada', competitors: 4, myStore: 205, total: 765 },
+                { brand: 'Dior', competitors: 3, myStore: 195, total: 742 },
+                { brand: 'Valentino', competitors: 3, myStore: 185, total: 698 },
+                { brand: 'Balenciaga', competitors: 3, myStore: 175, total: 675 },
+                { brand: 'Saint Laurent', competitors: 3, myStore: 165, total: 652 },
+                { brand: 'Burberry', competitors: 2, myStore: 155, total: 628 },
+                { brand: 'Fendi', competitors: 2, myStore: 145, total: 605 },
+                { brand: 'Givenchy', competitors: 2, myStore: 135, total: 582 },
+                { brand: 'Celine', competitors: 2, myStore: 125, total: 558 },
+                { brand: 'Loewe', competitors: 2, myStore: 115, total: 535 },
+                { brand: 'Alexander McQueen', competitors: 1, myStore: 105, total: 512 },
+                { brand: 'Versace', competitors: 1, myStore: 95, total: 488 },
+                { brand: 'Dolce & Gabbana', competitors: 1, myStore: 85, total: 465 },
+                { brand: 'Miu Miu', competitors: 1, myStore: 75, total: 442 },
+                { brand: 'Off-White', competitors: 1, myStore: 65, total: 418 },
+                { brand: 'Bottega Veneta', competitors: 1, myStore: 55, total: 395 },
+                { brand: 'Kenzo', competitors: 1, myStore: 45, total: 372 },
+                { brand: 'Balmain', competitors: 1, myStore: 35, total: 348 },
+                { brand: 'Lanvin', competitors: 1, myStore: 25, total: 325 },
+                { brand: 'Maison Margiela', competitors: 1, myStore: 15, total: 302 },
+                { brand: 'Thom Browne', competitors: 1, myStore: 12, total: 278 },
+                { brand: 'Issey Miyake', competitors: 1, myStore: 10, total: 255 },
+                { brand: 'Jil Sander', competitors: 1, myStore: 8, total: 232 },
+                { brand: 'Haider Ackermann', competitors: 1, myStore: 6, total: 208 },
+                { brand: 'Rick Owens', competitors: 1, myStore: 4, total: 185 },
+                { brand: 'Comme des Garçons', competitors: 1, myStore: 2, total: 162 }
+            ].sort((a, b) => b.myStore - a.myStore);
+
+            const overlapBrandBody = document.getElementById('overlapBrandTableBody');
+            overlapBrandData.forEach(row => {
+                const tr = overlapBrandBody.insertRow();
+                tr.innerHTML = `<td>${row.brand}</td><td>${row.myStore}</td><td>${row.competitors}</td><td>${row.total}</td>`;
+            });
+
+            // Overlap Product data
+            const overlapProductData = [
+                { img: '/assets/100*100.svg', name: 'Classic Leather Handbag', brand: 'Gucci', fullPrice: 2800, myPrice: 2240, discount: '20%', priceType: 'Highest', stores: 8, minPrice: 1950, maxPrice: 3200, gender: 'Female', category: 'Bag', subCategory: 'Handbag' },
+                { img: '/assets/100*100.svg', name: 'Silk Evening Dress', brand: 'Prada', fullPrice: 3500, myPrice: 2625, discount: '25%', priceType: 'Average', stores: 7, minPrice: 2800, maxPrice: 4200, gender: 'Female', category: 'Clothing', subCategory: 'Dress' },
+                { img: '/assets/100*100.svg', name: 'Designer Sneakers', brand: 'Chanel', fullPrice: 1200, myPrice: 960, discount: '20%', priceType: 'Lowest', stores: 7, minPrice: 850, maxPrice: 1500, gender: 'Unisex', category: 'Shoes', subCategory: 'Sneaker' },
+                { img: '/assets/100*100.svg', name: 'Luxury Watch', brand: 'Dior', fullPrice: 5000, myPrice: 4000, discount: '20%', priceType: 'Highest', stores: 6, minPrice: 3500, maxPrice: 6000, gender: 'Unisex', category: 'Accessories', subCategory: 'Watch' },
+                { img: '/assets/100*100.svg', name: 'Premium Sunglasses', brand: 'Louis Vuitton', fullPrice: 450, myPrice: 337, discount: '25%', priceType: 'Average', stores: 6, minPrice: 380, maxPrice: 550, gender: 'Unisex', category: 'Accessories', subCategory: 'Eyewear' },
+                { img: '/assets/100*100.svg', name: 'Cashmere Sweater', brand: 'Hermès', fullPrice: 1800, myPrice: 1440, discount: '20%', priceType: 'Lowest', stores: 6, minPrice: 1200, maxPrice: 2100, gender: 'Female', category: 'Clothing', subCategory: 'Sweater' },
+                { img: '/assets/100*100.svg', name: 'Wool Coat', brand: 'Balenciaga', fullPrice: 2200, myPrice: 1650, discount: '25%', priceType: 'Highest', stores: 5, minPrice: 1800, maxPrice: 2800, gender: 'Female', category: 'Clothing', subCategory: 'Coat' },
+                { img: '/assets/100*100.svg', name: 'Crossbody Bag', brand: 'Saint Laurent', fullPrice: 1950, myPrice: 1462, discount: '25%', priceType: 'Average', stores: 5, minPrice: 1600, maxPrice: 2400, gender: 'Female', category: 'Bag', subCategory: 'Crossbody' },
+                { img: '/assets/100*100.svg', name: 'High Heels', brand: 'Valentino', fullPrice: 1100, myPrice: 880, discount: '20%', priceType: 'Lowest', stores: 5, minPrice: 750, maxPrice: 1400, gender: 'Female', category: 'Shoes', subCategory: 'Heels' },
+                { img: '/assets/100*100.svg', name: 'Leather Belt', brand: 'Bottega Veneta', fullPrice: 650, myPrice: 487, discount: '25%', priceType: 'Highest', stores: 5, minPrice: 550, maxPrice: 800, gender: 'Unisex', category: 'Accessories', subCategory: 'Belt' },
+                { img: '/assets/100*100.svg', name: 'Perfume 100ml', brand: 'Fendi', fullPrice: 280, myPrice: 210, discount: '25%', priceType: 'Average', stores: 4, minPrice: 220, maxPrice: 350, gender: 'Female', category: 'Beauty', subCategory: 'Fragrance' },
+                { img: '/assets/100*100.svg', name: 'Silk Scarf', brand: 'Givenchy', fullPrice: 380, myPrice: 285, discount: '25%', priceType: 'Lowest', stores: 4, minPrice: 300, maxPrice: 480, gender: 'Female', category: 'Accessories', subCategory: 'Scarf' },
+                { img: '/assets/100*100.svg', name: 'Denim Jeans', brand: 'Burberry', fullPrice: 850, myPrice: 637, discount: '25%', priceType: 'Highest', stores: 4, minPrice: 700, maxPrice: 1050, gender: 'Unisex', category: 'Clothing', subCategory: 'Jeans' },
+                { img: '/assets/100*100.svg', name: 'Tote Bag', brand: 'Celine', fullPrice: 1600, myPrice: 1200, discount: '25%', priceType: 'Average', stores: 4, minPrice: 1300, maxPrice: 1900, gender: 'Female', category: 'Bag', subCategory: 'Tote' },
+                { img: '/assets/100*100.svg', name: 'Loafers', brand: 'Loewe', fullPrice: 950, myPrice: 712, discount: '25%', priceType: 'Lowest', stores: 3, minPrice: 800, maxPrice: 1200, gender: 'Male', category: 'Shoes', subCategory: 'Loafers' },
+                { img: '/assets/100*100.svg', name: 'Bracelet', brand: 'Alexander McQueen', fullPrice: 520, myPrice: 390, discount: '25%', priceType: 'Highest', stores: 3, minPrice: 450, maxPrice: 650, gender: 'Female', category: 'Accessories', subCategory: 'Bracelet' },
+                { img: '/assets/100*100.svg', name: 'Lipstick Set', brand: 'Versace', fullPrice: 180, myPrice: 135, discount: '25%', priceType: 'Average', stores: 3, minPrice: 150, maxPrice: 220, gender: 'Female', category: 'Beauty', subCategory: 'Makeup' },
+                { img: '/assets/100*100.svg', name: 'Polo Shirt', brand: 'Dolce & Gabbana', fullPrice: 620, myPrice: 465, discount: '25%', priceType: 'Lowest', stores: 3, minPrice: 500, maxPrice: 750, gender: 'Male', category: 'Clothing', subCategory: 'Shirt' },
+                { img: '/assets/100*100.svg', name: 'Blazer', brand: 'Miu Miu', fullPrice: 1400, myPrice: 1050, discount: '25%', priceType: 'Highest', stores: 2, minPrice: 1200, maxPrice: 1700, gender: 'Female', category: 'Clothing', subCategory: 'Blazer' },
+                { img: '/assets/100*100.svg', name: 'Clutch', brand: 'Off-White', fullPrice: 890, myPrice: 667, discount: '25%', priceType: 'Average', stores: 2, minPrice: 750, maxPrice: 1100, gender: 'Female', category: 'Bag', subCategory: 'Clutch' },
+                { img: '/assets/100*100.svg', name: 'Boots', brand: 'Kenzo', fullPrice: 1300, myPrice: 975, discount: '25%', priceType: 'Lowest', stores: 2, minPrice: 1100, maxPrice: 1600, gender: 'Female', category: 'Shoes', subCategory: 'Boots' },
+                { img: '/assets/100*100.svg', name: 'Necklace', brand: 'Balmain', fullPrice: 780, myPrice: 585, discount: '25%', priceType: 'Highest', stores: 2, minPrice: 650, maxPrice: 950, gender: 'Female', category: 'Accessories', subCategory: 'Necklace' },
+                { img: '/assets/100*100.svg', name: 'Face Cream', brand: 'Lanvin', fullPrice: 220, myPrice: 165, discount: '25%', priceType: 'Average', stores: 2, minPrice: 180, maxPrice: 280, gender: 'Female', category: 'Beauty', subCategory: 'Skincare' },
+                { img: '/assets/100*100.svg', name: 'T-Shirt', brand: 'Maison Margiela', fullPrice: 480, myPrice: 360, discount: '25%', priceType: 'Lowest', stores: 1, minPrice: 400, maxPrice: 600, gender: 'Unisex', category: 'Clothing', subCategory: 'T-Shirt' },
+                { img: '/assets/100*100.svg', name: 'Shorts', brand: 'Thom Browne', fullPrice: 550, myPrice: 412, discount: '25%', priceType: 'Highest', stores: 1, minPrice: 480, maxPrice: 680, gender: 'Male', category: 'Clothing', subCategory: 'Shorts' },
+                { img: '/assets/100*100.svg', name: 'Backpack', brand: 'Issey Miyake', fullPrice: 1100, myPrice: 825, discount: '25%', priceType: 'Average', stores: 1, minPrice: 950, maxPrice: 1350, gender: 'Unisex', category: 'Bag', subCategory: 'Backpack' },
+                { img: '/assets/100*100.svg', name: 'Sandals', brand: 'Jil Sander', fullPrice: 680, myPrice: 510, discount: '25%', priceType: 'Lowest', stores: 1, minPrice: 580, maxPrice: 850, gender: 'Unisex', category: 'Shoes', subCategory: 'Sandals' },
+                { img: '/assets/100*100.svg', name: 'Ring', brand: 'Haider Ackermann', fullPrice: 420, myPrice: 315, discount: '25%', priceType: 'Highest', stores: 1, minPrice: 350, maxPrice: 520, gender: 'Female', category: 'Accessories', subCategory: 'Ring' },
+                { img: '/assets/100*100.svg', name: 'Serum', brand: 'Rick Owens', fullPrice: 150, myPrice: 112, discount: '25%', priceType: 'Average', stores: 1, minPrice: 130, maxPrice: 190, gender: 'Female', category: 'Beauty', subCategory: 'Skincare' },
+                { img: '/assets/100*100.svg', name: 'Structured Bag', brand: 'Comme des Garçons', fullPrice: 1700, myPrice: 1275, discount: '25%', priceType: 'Lowest', stores: 1, minPrice: 1400, maxPrice: 2100, gender: 'Female', category: 'Bag', subCategory: 'Shoulder' }
+            ].sort((a, b) => b.stores - a.stores);
+
+            const overlapProductBody = document.getElementById('overlapProductTableBody');
+            overlapProductData.forEach(p => {
+                const tr = overlapProductBody.insertRow();
+                tr.innerHTML = `<td><div class="qs-img-placeholder">N/A</div></td><td>${p.name}</td><td>${p.brand}</td><td>$${p.fullPrice}</td><td>$${p.myPrice}</td><td>${p.discount}</td><td>${p.priceType}</td><td>${p.stores}</td><td>$${p.minPrice}</td><td>$${p.maxPrice}</td><td><a href="https://www.modesens.com" target="_blank" style="color: #0073bb; text-decoration: none;">Link</a></td><td>${p.gender}</td><td>${p.category}</td><td>${p.subCategory}</td>`;
+            });
+
+            // Out-of-stock Brand data
+            const outOfStockBrandData = [
+                { brand: 'Hermès', competitors: 5, products: 892 },
+                { brand: 'Chanel', competitors: 5, products: 856 },
+                { brand: 'Louis Vuitton', competitors: 4, products: 823 },
+                { brand: 'Gucci', competitors: 4, products: 798 },
+                { brand: 'Prada', competitors: 4, products: 765 },
+                { brand: 'Dior', competitors: 3, products: 742 },
+                { brand: 'Valentino', competitors: 3, products: 698 },
+                { brand: 'Balenciaga', competitors: 3, products: 675 },
+                { brand: 'Saint Laurent', competitors: 3, products: 652 },
+                { brand: 'Burberry', competitors: 2, products: 628 },
+                { brand: 'Fendi', competitors: 2, products: 605 },
+                { brand: 'Givenchy', competitors: 2, products: 582 },
+                { brand: 'Celine', competitors: 2, products: 558 },
+                { brand: 'Loewe', competitors: 2, products: 535 },
+                { brand: 'Alexander McQueen', competitors: 1, products: 512 },
+                { brand: 'Versace', competitors: 1, products: 488 },
+                { brand: 'Dolce & Gabbana', competitors: 1, products: 465 },
+                { brand: 'Miu Miu', competitors: 1, products: 442 },
+                { brand: 'Off-White', competitors: 1, products: 418 },
+                { brand: 'Bottega Veneta', competitors: 1, products: 395 },
+                { brand: 'Kenzo', competitors: 1, products: 372 },
+                { brand: 'Balmain', competitors: 1, products: 348 },
+                { brand: 'Lanvin', competitors: 1, products: 325 },
+                { brand: 'Maison Margiela', competitors: 1, products: 302 },
+                { brand: 'Thom Browne', competitors: 1, products: 278 },
+                { brand: 'Issey Miyake', competitors: 1, products: 255 },
+                { brand: 'Jil Sander', competitors: 1, products: 232 },
+                { brand: 'Haider Ackermann', competitors: 1, products: 208 },
+                { brand: 'Rick Owens', competitors: 1, products: 185 },
+                { brand: 'Comme des Garçons', competitors: 1, products: 162 }
+            ];
+
+            const outOfStockBrandBody = document.getElementById('outOfStockBrandTableBody');
+            outOfStockBrandData.forEach(row => {
+                const tr = outOfStockBrandBody.insertRow();
+                tr.innerHTML = `<td>${row.brand}</td><td>${row.competitors}</td><td>${row.products}</td>`;
+            });
+
+            // Out-of-stock Product data
+            const outOfStockProductData = [
+                { img: '/assets/100*100.svg', name: 'Vintage Leather Tote', brand: 'Hermès', stores: 5, fullPrice: 3200, minPrice: 2400, maxPrice: 4100, link: 'https://www.modesens.com', gender: 'Female', category: 'Bag', subCategory: 'Tote' },
+                { img: '/assets/100*100.svg', name: 'Quilted Evening Bag', brand: 'Chanel', stores: 4, fullPrice: 2900, minPrice: 2200, maxPrice: 3800, link: 'https://www.modesens.com', gender: 'Female', category: 'Bag', subCategory: 'Evening' },
+                { img: '/assets/100*100.svg', name: 'Monogram Canvas Bag', brand: 'Louis Vuitton', stores: 5, fullPrice: 2100, minPrice: 1600, maxPrice: 2800, link: 'https://www.modesens.com', gender: 'Female', category: 'Bag', subCategory: 'Tote' },
+                { img: '/assets/100*100.svg', name: 'GG Marmont Bag', brand: 'Gucci', stores: 3, fullPrice: 2400, minPrice: 1800, maxPrice: 3200, link: 'https://www.modesens.com', gender: 'Female', category: 'Bag', subCategory: 'Shoulder' },
+                { img: '/assets/100*100.svg', name: 'Saffiano Leather Bag', brand: 'Prada', stores: 4, fullPrice: 2600, minPrice: 1950, maxPrice: 3400, link: 'https://www.modesens.com', gender: 'Female', category: 'Bag', subCategory: 'Tote' },
+                { img: '/assets/100*100.svg', name: 'Saddle Bag', brand: 'Dior', stores: 5, fullPrice: 3100, minPrice: 2300, maxPrice: 4000, link: 'https://www.modesens.com', gender: 'Female', category: 'Bag', subCategory: 'Shoulder' },
+                { img: '/assets/100*100.svg', name: 'Rockstud Tote', brand: 'Valentino', stores: 2, fullPrice: 2200, minPrice: 1650, maxPrice: 2900, link: 'https://www.modesens.com', gender: 'Female', category: 'Bag', subCategory: 'Tote' },
+                { img: '/assets/100*100.svg', name: 'City Bag', brand: 'Balenciaga', stores: 3, fullPrice: 1950, minPrice: 1450, maxPrice: 2600, link: 'https://www.modesens.com', gender: 'Female', category: 'Bag', subCategory: 'Shoulder' },
+                { img: '/assets/100*100.svg', name: 'Muse Bag', brand: 'Saint Laurent', stores: 4, fullPrice: 2300, minPrice: 1700, maxPrice: 3000, link: 'https://www.modesens.com', gender: 'Female', category: 'Bag', subCategory: 'Tote' },
+                { img: '/assets/100*100.svg', name: 'Vintage Check Bag', brand: 'Burberry', stores: 1, fullPrice: 1800, minPrice: 1350, maxPrice: 2400, link: 'https://www.modesens.com', gender: 'Female', category: 'Bag', subCategory: 'Shoulder' },
+                { img: '/assets/100*100.svg', name: 'Peekaboo Bag', brand: 'Fendi', stores: 5, fullPrice: 2700, minPrice: 2000, maxPrice: 3500, link: 'https://www.modesens.com', gender: 'Female', category: 'Bag', subCategory: 'Tote' },
+                { img: '/assets/100*100.svg', name: 'Antigona Bag', brand: 'Givenchy', stores: 3, fullPrice: 2100, minPrice: 1600, maxPrice: 2800, link: 'https://www.modesens.com', gender: 'Female', category: 'Bag', subCategory: 'Tote' },
+                { img: '/assets/100*100.svg', name: 'Luggage Bag', brand: 'Celine', stores: 4, fullPrice: 2400, minPrice: 1800, maxPrice: 3200, link: 'https://www.modesens.com', gender: 'Female', category: 'Bag', subCategory: 'Tote' },
+                { img: '/assets/100*100.svg', name: 'Puzzle Bag', brand: 'Loewe', stores: 2, fullPrice: 1950, minPrice: 1450, maxPrice: 2600, link: 'https://www.modesens.com', gender: 'Female', category: 'Bag', subCategory: 'Shoulder' },
+                { img: '/assets/100*100.svg', name: 'Skull Bag', brand: 'Alexander McQueen', stores: 3, fullPrice: 2200, minPrice: 1650, maxPrice: 2900, link: 'https://www.modesens.com', gender: 'Female', category: 'Bag', subCategory: 'Shoulder' },
+                { img: '/assets/100*100.svg', name: 'Medusa Bag', brand: 'Versace', stores: 5, fullPrice: 2100, minPrice: 1600, maxPrice: 2800, link: 'https://www.modesens.com', gender: 'Female', category: 'Bag', subCategory: 'Tote' },
+                { img: '/assets/100*100.svg', name: 'Sicily Bag', brand: 'Dolce & Gabbana', stores: 1, fullPrice: 1800, minPrice: 1350, maxPrice: 2400, link: 'https://www.modesens.com', gender: 'Female', category: 'Bag', subCategory: 'Shoulder' },
+                { img: '/assets/100*100.svg', name: 'Bow Bag', brand: 'Miu Miu', stores: 4, fullPrice: 2000, minPrice: 1500, maxPrice: 2700, link: 'https://www.modesens.com', gender: 'Female', category: 'Bag', subCategory: 'Shoulder' },
+                { img: '/assets/100*100.svg', name: 'Industrial Bag', brand: 'Off-White', stores: 2, fullPrice: 1700, minPrice: 1280, maxPrice: 2300, link: 'https://www.modesens.com', gender: 'Female', category: 'Bag', subCategory: 'Tote' },
+                { img: '/assets/100*100.svg', name: 'Intrecciato Bag', brand: 'Bottega Veneta', stores: 3, fullPrice: 2300, minPrice: 1700, maxPrice: 3000, link: 'https://www.modesens.com', gender: 'Female', category: 'Bag', subCategory: 'Tote' },
+                { img: '/assets/100*100.svg', name: 'Tiger Bag', brand: 'Kenzo', stores: 5, fullPrice: 1600, minPrice: 1200, maxPrice: 2100, link: 'https://www.modesens.com', gender: 'Female', category: 'Bag', subCategory: 'Shoulder' },
+                { img: '/assets/100*100.svg', name: 'Gold Bag', brand: 'Balmain', stores: 4, fullPrice: 1900, minPrice: 1425, maxPrice: 2500, link: 'https://www.modesens.com', gender: 'Female', category: 'Bag', subCategory: 'Shoulder' },
+                { img: '/assets/100*100.svg', name: 'Embellished Bag', brand: 'Lanvin', stores: 1, fullPrice: 1750, minPrice: 1310, maxPrice: 2300, link: 'https://www.modesens.com', gender: 'Female', category: 'Bag', subCategory: 'Tote' },
+                { img: '/assets/100*100.svg', name: 'Decortique Bag', brand: 'Maison Margiela', stores: 3, fullPrice: 1850, minPrice: 1387, maxPrice: 2450, link: 'https://www.modesens.com', gender: 'Female', category: 'Bag', subCategory: 'Shoulder' },
+                { img: '/assets/100*100.svg', name: 'Striped Bag', brand: 'Thom Browne', stores: 2, fullPrice: 1600, minPrice: 1200, maxPrice: 2100, link: 'https://www.modesens.com', gender: 'Female', category: 'Bag', subCategory: 'Tote' },
+                { img: '/assets/100*100.svg', name: 'Pleated Bag', brand: 'Issey Miyake', stores: 4, fullPrice: 1700, minPrice: 1275, maxPrice: 2250, link: 'https://www.modesens.com', gender: 'Female', category: 'Bag', subCategory: 'Shoulder' },
+                { img: '/assets/100*100.svg', name: 'Minimalist Bag', brand: 'Jil Sander', stores: 5, fullPrice: 1550, minPrice: 1162, maxPrice: 2050, link: 'https://www.modesens.com', gender: 'Female', category: 'Bag', subCategory: 'Tote' },
+                { img: '/assets/100*100.svg', name: 'Sculptural Bag', brand: 'Haider Ackermann', stores: 3, fullPrice: 1650, minPrice: 1237, maxPrice: 2175, link: 'https://www.modesens.com', gender: 'Female', category: 'Bag', subCategory: 'Shoulder' },
+                { img: '/assets/100*100.svg', name: 'Avant-Garde Bag', brand: 'Rick Owens', stores: 1, fullPrice: 1800, minPrice: 1350, maxPrice: 2400, link: 'https://www.modesens.com', gender: 'Female', category: 'Bag', subCategory: 'Tote' },
+                { img: '/assets/100*100.svg', name: 'Structured Bag', brand: 'Comme des Garçons', stores: 4, fullPrice: 1700, minPrice: 1275, maxPrice: 2250, link: 'https://www.modesens.com', gender: 'Female', category: 'Bag', subCategory: 'Shoulder' }
+            ];
+
+            const outOfStockProductBody = document.getElementById('outOfStockProductTableBody');
+            outOfStockProductData.forEach(p => {
+                const tr = outOfStockProductBody.insertRow();
+                tr.innerHTML = `<td><div class="qs-img-placeholder">N/A</div></td><td>${p.name}</td><td>${p.brand}</td><td>${p.stores}</td><td>$${p.fullPrice}</td><td>$${p.minPrice}</td><td>$${p.maxPrice}</td><td><a href="${p.link}" target="_blank" style="color: #0073bb; text-decoration: none;">Link</a></td><td>${p.gender}</td><td>${p.category}</td><td>${p.subCategory}</td>`;
+            });
+
+            // Exclusively Brand data
+            const exclusivelyBrandData = [
+                { brand: 'Hermès', myStore: 312 },
+                { brand: 'Chanel', myStore: 298 },
+                { brand: 'Louis Vuitton', myStore: 285 },
+                { brand: 'Gucci', myStore: 272 },
+                { brand: 'Prada', myStore: 258 },
+                { brand: 'Dior', myStore: 245 },
+                { brand: 'Valentino', myStore: 232 },
+                { brand: 'Balenciaga', myStore: 218 },
+                { brand: 'Saint Laurent', myStore: 205 },
+                { brand: 'Burberry', myStore: 192 },
+                { brand: 'Fendi', myStore: 178 },
+                { brand: 'Givenchy', myStore: 165 },
+                { brand: 'Celine', myStore: 152 },
+                { brand: 'Loewe', myStore: 138 },
+                { brand: 'Alexander McQueen', myStore: 125 },
+                { brand: 'Versace', myStore: 112 },
+                { brand: 'Dolce & Gabbana', myStore: 98 },
+                { brand: 'Miu Miu', myStore: 85 },
+                { brand: 'Off-White', myStore: 72 },
+                { brand: 'Bottega Veneta', myStore: 58 },
+                { brand: 'Kenzo', myStore: 45 },
+                { brand: 'Balmain', myStore: 32 },
+                { brand: 'Lanvin', myStore: 28 },
+                { brand: 'Maison Margiela', myStore: 25 },
+                { brand: 'Thom Browne', myStore: 22 },
+                { brand: 'Issey Miyake', myStore: 18 },
+                { brand: 'Jil Sander', myStore: 15 },
+                { brand: 'Haider Ackermann', myStore: 12 },
+                { brand: 'Rick Owens', myStore: 8 },
+                { brand: 'Comme des Garçons', myStore: 5 }
+            ];
+
+            const exclusivelyBrandBody = document.getElementById('exclusivelyBrandTableBody');
+            exclusivelyBrandData.forEach(row => {
+                const tr = exclusivelyBrandBody.insertRow();
+                tr.innerHTML = `<td>${row.brand}</td><td>${row.myStore}</td>`;
+            });
+
+            // Exclusively Product data
+            const exclusivelyProductData = [
+                { img: '/assets/100*100.svg', name: 'Exclusive Leather Tote', brand: 'Hermès', fullPrice: 3200, myPrice: 2560, discount: '20%', priceType: 'Highest', gender: 'Female', category: 'Bag', subCategory: 'Tote' },
+                { img: '/assets/100*100.svg', name: 'Limited Edition Dress', brand: 'Chanel', fullPrice: 2900, myPrice: 2175, discount: '25%', priceType: 'Average', gender: 'Female', category: 'Clothing', subCategory: 'Dress' },
+                { img: '/assets/100*100.svg', name: 'Exclusive Sneakers', brand: 'Louis Vuitton', fullPrice: 2100, myPrice: 1680, discount: '20%', priceType: 'Lowest', gender: 'Unisex', category: 'Shoes', subCategory: 'Sneaker' },
+                { img: '/assets/100*100.svg', name: 'Limited Watch', brand: 'Gucci', fullPrice: 2400, myPrice: 1800, discount: '25%', priceType: 'Highest', gender: 'Unisex', category: 'Accessories', subCategory: 'Watch' },
+                { img: '/assets/100*100.svg', name: 'Exclusive Sunglasses', brand: 'Prada', fullPrice: 1950, myPrice: 1462, discount: '25%', priceType: 'Average', gender: 'Unisex', category: 'Accessories', subCategory: 'Eyewear' },
+                { img: '/assets/100*100.svg', name: 'Limited Sweater', brand: 'Dior', fullPrice: 1800, myPrice: 1440, discount: '20%', priceType: 'Lowest', gender: 'Female', category: 'Clothing', subCategory: 'Sweater' },
+                { img: '/assets/100*100.svg', name: 'Exclusive Coat', brand: 'Valentino', fullPrice: 2200, myPrice: 1650, discount: '25%', priceType: 'Highest', gender: 'Female', category: 'Clothing', subCategory: 'Coat' },
+                { img: '/assets/100*100.svg', name: 'Limited Crossbody', brand: 'Balenciaga', fullPrice: 1950, myPrice: 1462, discount: '25%', priceType: 'Average', gender: 'Female', category: 'Bag', subCategory: 'Crossbody' },
+                { img: '/assets/100*100.svg', name: 'Exclusive Heels', brand: 'Saint Laurent', fullPrice: 1100, myPrice: 880, discount: '20%', priceType: 'Lowest', gender: 'Female', category: 'Shoes', subCategory: 'Heels' },
+                { img: '/assets/100*100.svg', name: 'Limited Belt', brand: 'Burberry', fullPrice: 650, myPrice: 487, discount: '25%', priceType: 'Highest', gender: 'Unisex', category: 'Accessories', subCategory: 'Belt' },
+                { img: '/assets/100*100.svg', name: 'Exclusive Perfume', brand: 'Fendi', fullPrice: 280, myPrice: 210, discount: '25%', priceType: 'Average', gender: 'Female', category: 'Beauty', subCategory: 'Fragrance' },
+                { img: '/assets/100*100.svg', name: 'Limited Scarf', brand: 'Givenchy', fullPrice: 380, myPrice: 285, discount: '25%', priceType: 'Lowest', gender: 'Female', category: 'Accessories', subCategory: 'Scarf' },
+                { img: '/assets/100*100.svg', name: 'Exclusive Jeans', brand: 'Celine', fullPrice: 850, myPrice: 637, discount: '25%', priceType: 'Highest', gender: 'Unisex', category: 'Clothing', subCategory: 'Jeans' },
+                { img: '/assets/100*100.svg', name: 'Limited Tote', brand: 'Loewe', fullPrice: 1600, myPrice: 1200, discount: '25%', priceType: 'Average', gender: 'Female', category: 'Bag', subCategory: 'Tote' },
+                { img: '/assets/100*100.svg', name: 'Exclusive Loafers', brand: 'Alexander McQueen', fullPrice: 950, myPrice: 712, discount: '25%', priceType: 'Lowest', gender: 'Male', category: 'Shoes', subCategory: 'Loafers' },
+                { img: '/assets/100*100.svg', name: 'Limited Bracelet', brand: 'Versace', fullPrice: 520, myPrice: 390, discount: '25%', priceType: 'Highest', gender: 'Female', category: 'Accessories', subCategory: 'Bracelet' },
+                { img: '/assets/100*100.svg', name: 'Exclusive Lipstick', brand: 'Dolce & Gabbana', fullPrice: 180, myPrice: 135, discount: '25%', priceType: 'Average', gender: 'Female', category: 'Beauty', subCategory: 'Makeup' },
+                { img: '/assets/100*100.svg', name: 'Limited Polo', brand: 'Miu Miu', fullPrice: 620, myPrice: 465, discount: '25%', priceType: 'Lowest', gender: 'Male', category: 'Clothing', subCategory: 'Shirt' },
+                { img: '/assets/100*100.svg', name: 'Exclusive Blazer', brand: 'Off-White', fullPrice: 1400, myPrice: 1050, discount: '25%', priceType: 'Highest', gender: 'Female', category: 'Clothing', subCategory: 'Blazer' },
+                { img: '/assets/100*100.svg', name: 'Limited Clutch', brand: 'Bottega Veneta', fullPrice: 890, myPrice: 667, discount: '25%', priceType: 'Average', gender: 'Female', category: 'Bag', subCategory: 'Clutch' },
+                { img: '/assets/100*100.svg', name: 'Exclusive Boots', brand: 'Kenzo', fullPrice: 1300, myPrice: 975, discount: '25%', priceType: 'Lowest', gender: 'Female', category: 'Shoes', subCategory: 'Boots' },
+                { img: '/assets/100*100.svg', name: 'Limited Necklace', brand: 'Balmain', fullPrice: 780, myPrice: 585, discount: '25%', priceType: 'Highest', gender: 'Female', category: 'Accessories', subCategory: 'Necklace' },
+                { img: '/assets/100*100.svg', name: 'Exclusive Cream', brand: 'Lanvin', fullPrice: 220, myPrice: 165, discount: '25%', priceType: 'Average', gender: 'Female', category: 'Beauty', subCategory: 'Skincare' },
+                { img: '/assets/100*100.svg', name: 'Limited T-Shirt', brand: 'Maison Margiela', fullPrice: 480, myPrice: 360, discount: '25%', priceType: 'Lowest', gender: 'Unisex', category: 'Clothing', subCategory: 'T-Shirt' },
+                { img: '/assets/100*100.svg', name: 'Exclusive Shorts', brand: 'Thom Browne', fullPrice: 550, myPrice: 412, discount: '25%', priceType: 'Highest', gender: 'Male', category: 'Clothing', subCategory: 'Shorts' },
+                { img: '/assets/100*100.svg', name: 'Limited Backpack', brand: 'Issey Miyake', fullPrice: 1100, myPrice: 825, discount: '25%', priceType: 'Average', gender: 'Unisex', category: 'Bag', subCategory: 'Backpack' },
+                { img: '/assets/100*100.svg', name: 'Exclusive Sandals', brand: 'Jil Sander', fullPrice: 680, myPrice: 510, discount: '25%', priceType: 'Lowest', gender: 'Unisex', category: 'Shoes', subCategory: 'Sandals' },
+                { img: '/assets/100*100.svg', name: 'Limited Ring', brand: 'Haider Ackermann', fullPrice: 420, myPrice: 315, discount: '25%', priceType: 'Highest', gender: 'Female', category: 'Accessories', subCategory: 'Ring' },
+                { img: '/assets/100*100.svg', name: 'Exclusive Serum', brand: 'Rick Owens', fullPrice: 150, myPrice: 112, discount: '25%', priceType: 'Average', gender: 'Female', category: 'Beauty', subCategory: 'Skincare' },
+                { img: '/assets/100*100.svg', name: 'Limited Bag', brand: 'Comme des Garçons', fullPrice: 1700, myPrice: 1275, discount: '25%', priceType: 'Lowest', gender: 'Female', category: 'Bag', subCategory: 'Shoulder' }
+            ];
+
+            const exclusivelyProductBody = document.getElementById('exclusivelyProductTableBody');
+            exclusivelyProductData.forEach(p => {
+                const tr = exclusivelyProductBody.insertRow();
+                tr.innerHTML = `<td><div class="qs-img-placeholder">N/A</div></td><td>${p.name}</td><td>${p.brand}</td><td>$${p.fullPrice}</td><td>$${p.myPrice}</td><td>${p.discount}</td><td><a href="https://www.modesens.com" target="_blank" style="color: #0073bb; text-decoration: none;">Link</a></td><td>${p.gender}</td><td>${p.category}</td><td>${p.subCategory}</td>`;
+            });
+        });
+    </script>
+</body>
+</html>

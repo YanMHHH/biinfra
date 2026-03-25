@@ -61,7 +61,31 @@ const cfg = {
 
 ---
 
-## 三、横轴时间格式
+## 三、X轴标签配置
+
+### 3.1 标签旋转与间隔
+为避免日期标签重叠，使用以下配置：
+- **旋转角度**：0°（水平显示）
+- **标签间隔**：每3个数据点显示一个标签
+
+### 3.2 X轴配置示例
+```javascript
+scales: {
+    x: {
+        ticks: {
+            maxRotation: 0,
+            minRotation: 0,
+            callback: function(value, index) {
+                return index % 3 === 0 ? this.getLabelForValue(value) : '';
+            }
+        }
+    }
+}
+```
+
+---
+
+## 四、横轴时间格式
 
 根据时间粒度使用不同格式：
 
@@ -83,7 +107,7 @@ const dates = Array.from({length: 30}, (_, i) => {
 
 ---
 
-## 四、Y轴单位格式化
+## 五、Y轴单位格式化
 
 ### 4.1 格式化规则
 
@@ -145,7 +169,7 @@ new Chart(document.getElementById('conversionChart'), {
 
 ---
 
-## 五、多线图例
+## 六、多线图例
 
 ### 5.1 颜色方案
 - 主色：`#0073bb`（蓝色）

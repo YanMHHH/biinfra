@@ -48,4 +48,10 @@ Body：
                                   第二个Table占两列，严格遵照qs-mockup-skill中的table定义。有如下字段：Product Image，Product Name，Brand，Full Price，My Store Price，My Store Discount，My Store Price Type（代表提供了最低、最高还是中间价格），在售电商数，Min Price，Max Price，Product Link，Gender，Category，Sub Category，请在这个Table中mock30条数据，按照My Store在售电商数量从高到低排列；
 
 
+    请严格按照qs-mockup-skill中quicksight的要求进行toB的mockup设计，在NAP_tob_mockup_v1_20260324.html中在tab3中追加  Exclusively Assortment 区域：
+  Section8：放一个分隔标题：'Exclusively Assortment'
+  Section9：三列结构，放两个table。第一个Table仅占一列，严格遵照qs-mockup-skill中的table定义。有如下字段：Brand，My Store In-stock Count，请在这个Table中mock30条数据，按照My Store In-stock count从高到底排列
+                                    第二个Table占两列，严格遵照qs-mockup-skill中的table定义。有如下字段：Product Image，Product Name，Brand，Full Price，My Store Price，My Store Discount，Product
+  Link，Gender，Category，Sub Category，请在这个Table中mock30条数据
+
 

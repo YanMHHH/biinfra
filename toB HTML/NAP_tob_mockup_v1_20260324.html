@@ -671,7 +671,7 @@ table.qs-table th {
                     <div class="col" style="flex: 0 0 33.33%; max-width: 33.33%;">
                         <div class="visual-card">
                             <div class="chart-header">
-                                <div class="chart-title">Brand Overlap Summary</div>
+                                <div class="chart-title">Shared Brand Summary</div>
                             </div>
                             <div class="table-scroll-container">
                                 <table class="qs-table">
@@ -730,7 +730,7 @@ table.qs-table th {
                     <div class="col" style="flex: 0 0 33.33%; max-width: 33.33%;">
                         <div class="visual-card">
                             <div class="chart-header">
-                                <div class="chart-title">Brand Not Carried Summary</div>
+                                <div class="chart-title">Brand Gap Summary</div>
                             </div>
                             <div class="table-scroll-container">
                                 <table class="qs-table">
@@ -750,7 +750,7 @@ table.qs-table th {
                     <div class="col" style="flex: 0 0 66.66%; max-width: 66.66%;">
                         <div class="visual-card">
                             <div class="chart-header">
-                                <div class="chart-title">Not Carried Products</div>
+                                <div class="chart-title">Missing Products</div>
                             </div>
                             <div class="table-scroll-container">
                                 <table class="qs-table">
@@ -770,6 +770,59 @@ table.qs-table th {
                                         </tr>
                                     </thead>
                                     <tbody id="outOfStockProductTableBody">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="visual-card">
+                    <div class="section-divider">Exclusively Assortment</div>
+                </div>
+
+                <div class="row">
+                    <div class="col" style="flex: 0 0 33.33%; max-width: 33.33%;">
+                        <div class="visual-card">
+                            <div class="chart-header">
+                                <div class="chart-title">Exclusive Brand Summary</div>
+                            </div>
+                            <div class="table-scroll-container">
+                                <table class="qs-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Brand</th>
+                                            <th>My Store In-stock Count</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="exclusivelyBrandTableBody">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col" style="flex: 0 0 66.66%; max-width: 66.66%;">
+                        <div class="visual-card">
+                            <div class="chart-header">
+                                <div class="chart-title">Unique Product List</div>
+                            </div>
+                            <div class="table-scroll-container">
+                                <table class="qs-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Product Image</th>
+                                            <th>Product Name</th>
+                                            <th>Brand</th>
+                                            <th>Full Price</th>
+                                            <th>My Store Price</th>
+                                            <th>My Store Discount</th>
+                                            <th>Product Link</th>
+                                            <th>Gender</th>
+                                            <th>Category</th>
+                                            <th>Sub Category</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="exclusivelyProductTableBody">
                                     </tbody>
                                 </table>
                             </div>
@@ -1696,6 +1749,97 @@ table.qs-table th {
                     <td>${p.stores}</td>
                     <td>$${p.minPrice}</td>
                     <td>$${p.maxPrice}</td>
+                    <td><a href="https://www.modesens.com" target="_blank" style="color: #0073bb; text-decoration: none;">Link</a></td>
+                    <td>${p.gender}</td>
+                    <td>${p.category}</td>
+                    <td>${p.subCategory}</td>
+                `;
+            });
+
+            // Exclusively Assortment Brand data (30 rows, sorted by My Store In-stock Count descending)
+            const exclusivelyBrandData = [
+                { brand: 'Hermès', myStore: 312 },
+                { brand: 'Chanel', myStore: 298 },
+                { brand: 'Louis Vuitton', myStore: 285 },
+                { brand: 'Gucci', myStore: 272 },
+                { brand: 'Prada', myStore: 258 },
+                { brand: 'Dior', myStore: 245 },
+                { brand: 'Valentino', myStore: 232 },
+                { brand: 'Balenciaga', myStore: 218 },
+                { brand: 'Saint Laurent', myStore: 205 },
+                { brand: 'Burberry', myStore: 192 },
+                { brand: 'Fendi', myStore: 178 },
+                { brand: 'Givenchy', myStore: 165 },
+                { brand: 'Celine', myStore: 152 },
+                { brand: 'Loewe', myStore: 138 },
+                { brand: 'Alexander McQueen', myStore: 125 },
+                { brand: 'Versace', myStore: 112 },
+                { brand: 'Dolce & Gabbana', myStore: 98 },
+                { brand: 'Miu Miu', myStore: 85 },
+                { brand: 'Off-White', myStore: 72 },
+                { brand: 'Bottega Veneta', myStore: 58 },
+                { brand: 'Kenzo', myStore: 45 },
+                { brand: 'Balmain', myStore: 32 },
+                { brand: 'Lanvin', myStore: 28 },
+                { brand: 'Maison Margiela', myStore: 25 },
+                { brand: 'Thom Browne', myStore: 22 },
+                { brand: 'Issey Miyake', myStore: 18 },
+                { brand: 'Jil Sander', myStore: 15 },
+                { brand: 'Haider Ackermann', myStore: 12 },
+                { brand: 'Rick Owens', myStore: 8 },
+                { brand: 'Comme des Garçons', myStore: 5 }
+            ];
+
+            const exclusivelyBrandBody = document.getElementById('exclusivelyBrandTableBody');
+            exclusivelyBrandData.forEach(row => {
+                const tr = exclusivelyBrandBody.insertRow();
+                tr.innerHTML = `<td>${row.brand}</td><td>${row.myStore}</td>`;
+            });
+
+            // Exclusively Assortment Product data (30 rows)
+            const exclusivelyProductData = [
+                { img: '/assets/100*100.svg', name: 'Exclusive Leather Tote', brand: 'Hermès', fullPrice: 3200, myPrice: 2560, discount: '20%', priceType: 'Highest', gender: 'Female', category: 'Bag', subCategory: 'Tote' },
+                { img: '/assets/100*100.svg', name: 'Limited Edition Dress', brand: 'Chanel', fullPrice: 2900, myPrice: 2175, discount: '25%', priceType: 'Average', gender: 'Female', category: 'Clothing', subCategory: 'Dress' },
+                { img: '/assets/100*100.svg', name: 'Exclusive Sneakers', brand: 'Louis Vuitton', fullPrice: 2100, myPrice: 1680, discount: '20%', priceType: 'Lowest', gender: 'Unisex', category: 'Shoes', subCategory: 'Sneaker' },
+                { img: '/assets/100*100.svg', name: 'Limited Watch', brand: 'Gucci', fullPrice: 2400, myPrice: 1800, discount: '25%', priceType: 'Highest', gender: 'Unisex', category: 'Accessories', subCategory: 'Watch' },
+                { img: '/assets/100*100.svg', name: 'Exclusive Sunglasses', brand: 'Prada', fullPrice: 1950, myPrice: 1462, discount: '25%', priceType: 'Average', gender: 'Unisex', category: 'Accessories', subCategory: 'Eyewear' },
+                { img: '/assets/100*100.svg', name: 'Limited Sweater', brand: 'Dior', fullPrice: 1800, myPrice: 1440, discount: '20%', priceType: 'Lowest', gender: 'Female', category: 'Clothing', subCategory: 'Sweater' },
+                { img: '/assets/100*100.svg', name: 'Exclusive Coat', brand: 'Valentino', fullPrice: 2200, myPrice: 1650, discount: '25%', priceType: 'Highest', gender: 'Female', category: 'Clothing', subCategory: 'Coat' },
+                { img: '/assets/100*100.svg', name: 'Limited Crossbody', brand: 'Balenciaga', fullPrice: 1950, myPrice: 1462, discount: '25%', priceType: 'Average', gender: 'Female', category: 'Bag', subCategory: 'Crossbody' },
+                { img: '/assets/100*100.svg', name: 'Exclusive Heels', brand: 'Saint Laurent', fullPrice: 1100, myPrice: 880, discount: '20%', priceType: 'Lowest', gender: 'Female', category: 'Shoes', subCategory: 'Heels' },
+                { img: '/assets/100*100.svg', name: 'Limited Belt', brand: 'Burberry', fullPrice: 650, myPrice: 487, discount: '25%', priceType: 'Highest', gender: 'Unisex', category: 'Accessories', subCategory: 'Belt' },
+                { img: '/assets/100*100.svg', name: 'Exclusive Perfume', brand: 'Fendi', fullPrice: 280, myPrice: 210, discount: '25%', priceType: 'Average', gender: 'Female', category: 'Beauty', subCategory: 'Fragrance' },
+                { img: '/assets/100*100.svg', name: 'Limited Scarf', brand: 'Givenchy', fullPrice: 380, myPrice: 285, discount: '25%', priceType: 'Lowest', gender: 'Female', category: 'Accessories', subCategory: 'Scarf' },
+                { img: '/assets/100*100.svg', name: 'Exclusive Jeans', brand: 'Celine', fullPrice: 850, myPrice: 637, discount: '25%', priceType: 'Highest', gender: 'Unisex', category: 'Clothing', subCategory: 'Jeans' },
+                { img: '/assets/100*100.svg', name: 'Limited Tote', brand: 'Loewe', fullPrice: 1600, myPrice: 1200, discount: '25%', priceType: 'Average', gender: 'Female', category: 'Bag', subCategory: 'Tote' },
+                { img: '/assets/100*100.svg', name: 'Exclusive Loafers', brand: 'Alexander McQueen', fullPrice: 950, myPrice: 712, discount: '25%', priceType: 'Lowest', gender: 'Male', category: 'Shoes', subCategory: 'Loafers' },
+                { img: '/assets/100*100.svg', name: 'Limited Bracelet', brand: 'Versace', fullPrice: 520, myPrice: 390, discount: '25%', priceType: 'Highest', gender: 'Female', category: 'Accessories', subCategory: 'Bracelet' },
+                { img: '/assets/100*100.svg', name: 'Exclusive Lipstick', brand: 'Dolce & Gabbana', fullPrice: 180, myPrice: 135, discount: '25%', priceType: 'Average', gender: 'Female', category: 'Beauty', subCategory: 'Makeup' },
+                { img: '/assets/100*100.svg', name: 'Limited Polo', brand: 'Miu Miu', fullPrice: 620, myPrice: 465, discount: '25%', priceType: 'Lowest', gender: 'Male', category: 'Clothing', subCategory: 'Shirt' },
+                { img: '/assets/100*100.svg', name: 'Exclusive Blazer', brand: 'Off-White', fullPrice: 1400, myPrice: 1050, discount: '25%', priceType: 'Highest', gender: 'Female', category: 'Clothing', subCategory: 'Blazer' },
+                { img: '/assets/100*100.svg', name: 'Limited Clutch', brand: 'Bottega Veneta', fullPrice: 890, myPrice: 667, discount: '25%', priceType: 'Average', gender: 'Female', category: 'Bag', subCategory: 'Clutch' },
+                { img: '/assets/100*100.svg', name: 'Exclusive Boots', brand: 'Kenzo', fullPrice: 1300, myPrice: 975, discount: '25%', priceType: 'Lowest', gender: 'Female', category: 'Shoes', subCategory: 'Boots' },
+                { img: '/assets/100*100.svg', name: 'Limited Necklace', brand: 'Balmain', fullPrice: 780, myPrice: 585, discount: '25%', priceType: 'Highest', gender: 'Female', category: 'Accessories', subCategory: 'Necklace' },
+                { img: '/assets/100*100.svg', name: 'Exclusive Cream', brand: 'Lanvin', fullPrice: 220, myPrice: 165, discount: '25%', priceType: 'Average', gender: 'Female', category: 'Beauty', subCategory: 'Skincare' },
+                { img: '/assets/100*100.svg', name: 'Limited T-Shirt', brand: 'Maison Margiela', fullPrice: 480, myPrice: 360, discount: '25%', priceType: 'Lowest', gender: 'Unisex', category: 'Clothing', subCategory: 'T-Shirt' },
+                { img: '/assets/100*100.svg', name: 'Exclusive Shorts', brand: 'Thom Browne', fullPrice: 550, myPrice: 412, discount: '25%', priceType: 'Highest', gender: 'Male', category: 'Clothing', subCategory: 'Shorts' },
+                { img: '/assets/100*100.svg', name: 'Limited Backpack', brand: 'Issey Miyake', fullPrice: 1100, myPrice: 825, discount: '25%', priceType: 'Average', gender: 'Unisex', category: 'Bag', subCategory: 'Backpack' },
+                { img: '/assets/100*100.svg', name: 'Exclusive Sandals', brand: 'Jil Sander', fullPrice: 680, myPrice: 510, discount: '25%', priceType: 'Lowest', gender: 'Unisex', category: 'Shoes', subCategory: 'Sandals' },
+                { img: '/assets/100*100.svg', name: 'Limited Ring', brand: 'Haider Ackermann', fullPrice: 420, myPrice: 315, discount: '25%', priceType: 'Highest', gender: 'Female', category: 'Accessories', subCategory: 'Ring' },
+                { img: '/assets/100*100.svg', name: 'Exclusive Serum', brand: 'Rick Owens', fullPrice: 150, myPrice: 112, discount: '25%', priceType: 'Average', gender: 'Female', category: 'Beauty', subCategory: 'Skincare' },
+                { img: '/assets/100*100.svg', name: 'Limited Bag', brand: 'Comme des Garçons', fullPrice: 1700, myPrice: 1275, discount: '25%', priceType: 'Lowest', gender: 'Female', category: 'Bag', subCategory: 'Shoulder' }
+            ];
+
+            const exclusivelyProductBody = document.getElementById('exclusivelyProductTableBody');
+            exclusivelyProductData.forEach(p => {
+                const tr = exclusivelyProductBody.insertRow();
+                tr.innerHTML = `
+                    <td><img src="${p.img}" class="qs-product-img" onerror="this.parentElement.innerHTML='<div class=qs-img-placeholder>N/A</div>'"></td>
+                    <td>${p.name}</td>
+                    <td>${p.brand}</td>
+                    <td>$${p.fullPrice}</td>
+                    <td>$${p.myPrice}</td>
+                    <td>${p.discount}</td>
                     <td><a href="https://www.modesens.com" target="_blank" style="color: #0073bb; text-decoration: none;">Link</a></td>
                     <td>${p.gender}</td>
                     <td>${p.category}</td>

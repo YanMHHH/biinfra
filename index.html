@@ -271,6 +271,10 @@
             </div>
 
             <div class="main-content">
+                <div class="visual-card">
+                    <div class="text-box">My Competitor Stores: Mytheresa, Moda Operandi, Neiman Marcus, SSENSE, Farfetch</div>
+                </div>
+
                 <div class="row" style="gap: 10px;">
                     <!-- 修复：统一高度为 180px 并使用 flex-direction: column -->
                     <div class="col" style="flex: 0 0 33.33%; max-width: 33.33%;">
@@ -945,9 +949,16 @@
                         label: 'Daily AOV',
                         data: [215, 228, 235, 242, 248, 255, 262, 268, 275, 282, 288, 295, 302, 308, 315, 322, 328, 335, 342, 348, 355, 362, 368, 375].map(v => v),
                         borderColor: '#0073bb',
-                        backgroundColor: 'rgba(0, 115, 187, 0.05)',
                         borderWidth: 2,
-                        fill: true,
+                        fill: false,
+                        tension: 0.4,
+                        pointRadius: 0
+                    }, {
+                        label: 'Competitor Avg',
+                        data: [195, 208, 215, 222, 228, 235, 242, 248, 255, 262, 268, 275, 282, 288, 295, 302, 308, 315, 322, 328, 335, 342, 348, 355].map(v => v),
+                        borderColor: '#879596',
+                        borderWidth: 2,
+                        fill: false,
                         tension: 0.4,
                         pointRadius: 0
                     }]
@@ -955,7 +966,7 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
+                    plugins: { legend: { display: true, position: 'top', labels: { boxWidth: 12, font: { size: 11 }}}, tooltip: { enabled: true, mode: 'index', intersect: false } },
                     scales: {
                         x: {
                             ticks: {
@@ -981,9 +992,16 @@
                         label: 'Daily CR',
                         data: [2.15, 2.28, 2.35, 2.42, 2.48, 2.55, 2.62, 2.68, 2.75, 2.82, 2.88, 2.95, 3.02, 3.08, 3.15, 3.22, 3.28, 3.35, 3.42, 3.48, 3.55, 3.62, 3.68, 3.75],
                         borderColor: '#0073bb',
-                        backgroundColor: 'rgba(0, 115, 187, 0.05)',
                         borderWidth: 2,
-                        fill: true,
+                        fill: false,
+                        tension: 0.4,
+                        pointRadius: 0
+                    }, {
+                        label: 'Competitor Avg',
+                        data: [1.95, 2.08, 2.15, 2.22, 2.28, 2.35, 2.42, 2.48, 2.55, 2.62, 2.68, 2.75, 2.82, 2.88, 2.95, 3.02, 3.08, 3.15, 3.22, 3.28, 3.35, 3.42, 3.48, 3.55],
+                        borderColor: '#879596',
+                        borderWidth: 2,
+                        fill: false,
                         tension: 0.4,
                         pointRadius: 0
                     }]
@@ -991,7 +1009,7 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
+                    plugins: { legend: { display: true, position: 'top', labels: { boxWidth: 12, font: { size: 11 }}}, tooltip: { enabled: true, mode: 'index', intersect: false } },
                     scales: {
                         x: {
                             ticks: {
@@ -1017,9 +1035,16 @@
                         label: 'Daily RR',
                         data: [2.85, 2.78, 2.72, 2.65, 2.58, 2.52, 2.45, 2.38, 2.32, 2.25, 2.18, 2.12, 2.05, 1.98, 1.92, 1.85, 1.78, 1.72, 1.65, 1.58, 1.52, 1.45, 1.38, 1.32],
                         borderColor: '#0073bb',
-                        backgroundColor: 'rgba(0, 115, 187, 0.05)',
                         borderWidth: 2,
-                        fill: true,
+                        fill: false,
+                        tension: 0.4,
+                        pointRadius: 0
+                    }, {
+                        label: 'Competitor Avg',
+                        data: [3.05, 2.98, 2.92, 2.85, 2.78, 2.72, 2.65, 2.58, 2.52, 2.45, 2.38, 2.32, 2.25, 2.18, 2.12, 2.05, 1.98, 1.92, 1.85, 1.78, 1.72, 1.65, 1.58, 1.52],
+                        borderColor: '#879596',
+                        borderWidth: 2,
+                        fill: false,
                         tension: 0.4,
                         pointRadius: 0
                     }]
@@ -1027,7 +1052,7 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
+                    plugins: { legend: { display: true, position: 'top', labels: { boxWidth: 12, font: { size: 11 }}}, tooltip: { enabled: true, mode: 'index', intersect: false } },
                     scales: {
                         x: {
                             ticks: {
@@ -1053,9 +1078,16 @@
                         label: 'Daily Impressions',
                         data: [850000, 875000, 895000, 920000, 945000, 970000, 995000, 1020000, 1045000, 1070000, 1095000, 1120000, 1145000, 1170000, 1195000, 1220000, 1245000, 1270000, 1295000, 1320000, 1345000, 1370000, 1395000, 1420000],
                         borderColor: '#0073bb',
-                        backgroundColor: 'rgba(0, 115, 187, 0.05)',
                         borderWidth: 2,
-                        fill: true,
+                        fill: false,
+                        tension: 0.4,
+                        pointRadius: 0
+                    }, {
+                        label: 'Competitor Avg',
+                        data: [750000, 775000, 795000, 820000, 845000, 870000, 895000, 920000, 945000, 970000, 995000, 1020000, 1045000, 1070000, 1095000, 1120000, 1145000, 1170000, 1195000, 1220000, 1245000, 1270000, 1295000, 1320000],
+                        borderColor: '#879596',
+                        borderWidth: 2,
+                        fill: false,
                         tension: 0.4,
                         pointRadius: 0
                     }]
@@ -1063,7 +1095,7 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
+                    plugins: { legend: { display: true, position: 'top', labels: { boxWidth: 12, font: { size: 11 }}}, tooltip: { enabled: true, mode: 'index', intersect: false } },
                     scales: {
                         x: {
                             ticks: {
@@ -1089,9 +1121,16 @@
                         label: 'Daily Clicks',
                         data: [28500, 29250, 30100, 31000, 31900, 32800, 33700, 34600, 35500, 36400, 37300, 38200, 39100, 40000, 40900, 41800, 42700, 43600, 44500, 45400, 46300, 47200, 48100, 49000],
                         borderColor: '#0073bb',
-                        backgroundColor: 'rgba(0, 115, 187, 0.05)',
                         borderWidth: 2,
-                        fill: true,
+                        fill: false,
+                        tension: 0.4,
+                        pointRadius: 0
+                    }, {
+                        label: 'Competitor Avg',
+                        data: [25500, 26250, 27100, 28000, 28900, 29800, 30700, 31600, 32500, 33400, 34300, 35200, 36100, 37000, 37900, 38800, 39700, 40600, 41500, 42400, 43300, 44200, 45100, 46000],
+                        borderColor: '#879596',
+                        borderWidth: 2,
+                        fill: false,
                         tension: 0.4,
                         pointRadius: 0
                     }]
@@ -1099,7 +1138,7 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
+                    plugins: { legend: { display: true, position: 'top', labels: { boxWidth: 12, font: { size: 11 }}}, tooltip: { enabled: true, mode: 'index', intersect: false } },
                     scales: {
                         x: {
                             ticks: {
@@ -1125,9 +1164,16 @@
                         label: 'Daily Orders',
                         data: [8900, 9150, 9400, 9650, 9900, 10150, 10400, 10650, 10900, 11150, 11400, 11650, 11900, 12150, 12400, 12650, 12900, 13150, 13400, 13650, 13900, 14150, 14400, 14650],
                         borderColor: '#0073bb',
-                        backgroundColor: 'rgba(0, 115, 187, 0.05)',
                         borderWidth: 2,
-                        fill: true,
+                        fill: false,
+                        tension: 0.4,
+                        pointRadius: 0
+                    }, {
+                        label: 'Competitor Avg',
+                        data: [7900, 8150, 8400, 8650, 8900, 9150, 9400, 9650, 9900, 10150, 10400, 10650, 10900, 11150, 11400, 11650, 11900, 12150, 12400, 12650, 12900, 13150, 13400, 13650],
+                        borderColor: '#879596',
+                        borderWidth: 2,
+                        fill: false,
                         tension: 0.4,
                         pointRadius: 0
                     }]
@@ -1135,7 +1181,7 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
+                    plugins: { legend: { display: true, position: 'top', labels: { boxWidth: 12, font: { size: 11 }}}, tooltip: { enabled: true, mode: 'index', intersect: false } },
                     scales: {
                         x: {
                             ticks: {
@@ -1161,9 +1207,16 @@
                         label: 'Daily Sales',
                         data: [125, 138, 142, 135, 155, 168, 172, 165, 178, 185, 192, 198, 205, 215, 225, 232, 240, 248, 255, 262, 270, 278, 285, 285].map(v => v * 1000),
                         borderColor: '#0073bb',
-                        backgroundColor: 'rgba(0, 115, 187, 0.05)',
                         borderWidth: 2,
-                        fill: true,
+                        fill: false,
+                        tension: 0.4,
+                        pointRadius: 0
+                    }, {
+                        label: 'Competitor Avg',
+                        data: [105, 118, 125, 120, 135, 148, 152, 145, 158, 165, 172, 178, 185, 195, 205, 212, 220, 228, 235, 242, 250, 258, 265, 265].map(v => v * 1000),
+                        borderColor: '#879596',
+                        borderWidth: 2,
+                        fill: false,
                         tension: 0.4,
                         pointRadius: 0
                     }]
@@ -1171,7 +1224,7 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
+                    plugins: { legend: { display: true, position: 'top', labels: { boxWidth: 12, font: { size: 11 }}}, tooltip: { enabled: true, mode: 'index', intersect: false } },
                     scales: {
                         x: {
                             ticks: {

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NAP Mockup</title>
+    <script type="text/javascript">
+    if(window.self !== window.top || ~location.href.indexOf("wv_task=")){
+        var s = document.createElement("script");
+        s.type = "text/javascript";
+        s.src = "https://app.webvizio.com/js/webvizio.js";
+        s.id = "webvizio_script";
+        document.head.append(s);
+    }
+</script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 150px;
+            height: 100vh;
+            background: #ffffff;
+            padding: 20px;
+            box-sizing: border-box;
+            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            transition: width 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar.collapsed {
+            width: 70px;
+            padding: 20px 8px;
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-title {
+            font-size: 12px;
+            color: #545b64;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar.collapsed .sidebar-title {
+            opacity: 0;
+            font-size: 0;
+        }
+
+        .version-name {
+            font-size: 14px;
+            color: #545b64;
+            font-weight: 500;
+            transition: opacity 0.3s ease;
+            padding: 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .version-name.active {
+            background-color: #f0f7ff;
+            color: #1976d2;
+            font-weight: 600;
+        }
+
+        .sidebar.collapsed .version-name {
+            opacity: 0;
+            font-size: 0;
+        }
+
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .menu-item {
+            padding: 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #545b64;
+            transition: all 0.3s ease;
+        }
+
+        .menu-item:hover {
+            background-color: #f0f0f0;
+        }
+
+        .menu-item.active {
+            background-color: #f0f7ff;
+            color: #1976d2;
+            font-weight: 600;
+        }
+
+        .sidebar.collapsed .menu-item {
+            padding: 12px 4px;
+            font-size: 0;
+        }
+
+        .main-wrapper {
+            width: 100%;
+            overflow-y: auto;
+        }
+
+        .content-frame {
+            width: 100%;
+            border: none;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-title">Version</div>
+            <button class="toggle-btn" id="toggleBtn">◀</button>
+        </div>
+<!--        <div class="version-name active">NAP-mockup-v1-20260324</div>-->
+        <div class="sidebar-menu">
+            <div class="menu-item active" data-page="./toB HTML/NAP_tob_mockup_v2.html">NAP-mockup-v2</div>
+            <div class="menu-item" data-page="./toB HTML/NAP_tob_mockup_v1_20260324.html">NAP-mockup-v1</div>
+<!--            <div class="menu-item" data-page="./toB HTML/tab1.html">Tab1</div>-->
+        </div>
+    </div>
+    <div class="main-wrapper">
+        <iframe class="content-frame" id="contentFrame"></iframe>
+    </div>
+
+    <script>
+        const frame = document.getElementById('contentFrame');
+        const sidebar = document.getElementById('sidebar');
+        const toggleBtn = document.getElementById('toggleBtn');
+        const menuItems = document.querySelectorAll('.menu-item');
+        let isCollapsed = false;
+
+        frame.src = './toB HTML/NAP_tob_mockup_v2.html';
+
+        frame.onload = () => {
+            const resizeFrame = () => {
+                frame.style.height = frame.contentDocument.documentElement.scrollHeight + 'px';
+            };
+            resizeFrame();
+            frame.contentWindow.addEventListener('resize', resizeFrame);
+        };
+
+        menuItems.forEach(item => {
+            item.addEventListener('click', () => {
+                menuItems.forEach(m => m.classList.remove('active'));
+                item.classList.add('active');
+                frame.src = item.dataset.page;
+            });
+        });
+
+        toggleBtn.addEventListener('click', () => {
+            isCollapsed = !isCollapsed;
+            sidebar.classList.toggle('collapsed');
+            toggleBtn.textContent = isCollapsed ? '▶' : '◀';
+        });
+    </script>
+</body>
+</html>

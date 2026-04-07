@@ -206,6 +206,17 @@
 
         table.qs-table tr:nth-child(even) { background-color: #fafafa; }
 
+        /* Price Position Cell Styling */
+        .price-position-highest {
+            background-color: #ffcccc !important;
+            color: #d32f2f !important;
+        }
+
+        .price-position-lowest {
+            background-color: #ccffcc !important;
+            color: #1d8102 !important;
+        }
+
         .row { display: flex; gap: 10px; }
         .col { flex: 1; }
 
@@ -1353,7 +1364,13 @@
             const tbody = document.getElementById('productTableBody');
             productData.forEach(p => {
                 const row = tbody.insertRow();
-                row.innerHTML = `<td><div class="qs-img-placeholder">N/A</div></td><td>${p.name}</td><td>${p.brand}</td><td>$${p.fullPrice}</td><td>$${p.myPrice}</td><td>${p.discount}</td><td>${p.priceType}</td><td>$${p.minPrice}</td><td>$${p.maxPrice}</td><td><a href="https://www.modesens.com" target="_blank" style="color: #0073bb; text-decoration: none;">Link</a></td><td>${p.gender}</td><td>${p.category}</td><td>${p.subCategory}</td>`;
+                let pricePositionClass = '';
+                if (p.priceType === 'Highest') {
+                    pricePositionClass = 'price-position-highest';
+                } else if (p.priceType === 'Lowest') {
+                    pricePositionClass = 'price-position-lowest';
+                }
+                row.innerHTML = `<td><div class="qs-img-placeholder">N/A</div></td><td>${p.name}</td><td>${p.brand}</td><td>$${p.fullPrice}</td><td>$${p.myPrice}</td><td>${p.discount}</td><td class="${pricePositionClass}">${p.priceType}</td><td>$${p.minPrice}</td><td>$${p.maxPrice}</td><td><a href="https://www.modesens.com" target="_blank" style="color: #0073bb; text-decoration: none;">Link</a></td><td>${p.gender}</td><td>${p.category}</td><td>${p.subCategory}</td>`;
             });
 
             // Category Chart

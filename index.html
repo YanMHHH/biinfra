@@ -1402,7 +1402,7 @@
                     maintainAspectRatio: false,
                     plugins: { legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 }}}},
                     scales: {
-                        x: { stacked: true, beginAtZero: true, ticks: { stepSize: getStepSize(categoryMax) }},
+                        x: { stacked: true, beginAtZero: true, ticks: { stepSize: getStepSize(categoryMax) }, title: { display: true, text: 'Items' }},
                         y: { stacked: true }
                     }
                 }
@@ -1448,7 +1448,7 @@
                     maintainAspectRatio: false,
                     plugins: { legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 }}}},
                     scales: {
-                        x: { stacked: true, beginAtZero: true, ticks: { stepSize: getStepSize(brandMax) }},
+                        x: { stacked: true, beginAtZero: true, ticks: { stepSize: getStepSize(brandMax) }, title: { display: true, text: 'Items' }},
                         y: { stacked: true }
                     }
                 }

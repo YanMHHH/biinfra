@@ -4,6 +4,89 @@
 
 ---
 
+## CSS 样式（嵌入式）
+
+```css
+.stacked-bar-chart {
+    flex: 1;
+}
+
+.stacked-bar-chart .visual-card {
+    background-color: var(--qs-white);
+    border: 1px solid var(--qs-border-dark);
+    padding: 15px;
+    box-shadow: 0 1px 1px 0 rgba(0,28,36,.05);
+}
+
+.stacked-bar-chart .chart-header {
+    margin-bottom: 10px;
+}
+
+.stacked-bar-chart .chart-title {
+    font-size: 15px;
+    font-weight: bold;
+    color: var(--qs-text-main);
+    position: sticky;
+    top: 0;
+    z-index: 9;
+    background-color: var(--qs-white);
+}
+
+.stacked-bar-chart .chart-container {
+    position: relative;
+    height: 400px;
+    padding-right: 15px;
+}
+
+.stacked-bar-chart canvas {
+    max-width: 100%;
+}
+
+.stacked-bar-chart .scroll-track {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 10px;
+    height: 100%;
+    background: #f1f1f1;
+    border-radius: 5px;
+    box-shadow: inset 0 0 2px rgba(0,0,0,0.1);
+}
+
+.stacked-bar-chart .scroll-thumb {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 50%;
+    background: #c1c1c1;
+    border-radius: 5px;
+    cursor: grab;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: background 0.2s;
+}
+
+.stacked-bar-chart .scroll-handle {
+    height: 8px;
+    width: 100%;
+    cursor: ns-resize;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.stacked-bar-chart .scroll-handle-line {
+    width: 6px;
+    height: 2px;
+    background: #fff;
+    border-radius: 1px;
+}
+```
+
+---
+
 ## 一、设计要求
 
 ### 1.1 图表布局

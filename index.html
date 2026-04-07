@@ -483,7 +483,7 @@
                 <div class="controls-grid" id="controls-grid-price">
                     <div class="control-item">
                         <label>Country</label>
-                        <select><option>US</option><option>CA</option><option>AU</option><option>CN</option></select>
+                        <select><option>US($)</option><option>CA(C$)</option><option>AU(A$)</option><option>CN(¥)</option></select>
                     </div>
                     <div class="control-item">
                         <label>Category</label>
@@ -626,7 +626,7 @@
                 <div class="controls-grid" id="controls-grid-inventory">
                     <div class="control-item">
                         <label>Country</label>
-                        <select><option>US</option><option>CA</option><option>AU</option><option>CN</option></select>
+                        <select><option>US($)</option><option>CA(C$)</option><option>AU(A$)</option><option>CN(¥)</option></select>
                     </div>
                     <div class="control-item">
                         <label>Category</label>
@@ -944,7 +944,7 @@
             new Chart(aovCtx, {
                 type: 'line',
                 data: {
-                    labels: Array.from({length: 24}, (_, i) => `2026-01-${i+1}`),
+                    labels: Array.from({length: 24}, (_, i) => `4/${(i % 30) + 1}/2026`),
                     datasets: [{
                         label: 'Daily AOV',
                         data: [215, 228, 235, 242, 248, 255, 262, 268, 275, 282, 288, 295, 302, 308, 315, 322, 328, 335, 342, 348, 355, 362, 368, 375].map(v => v),
@@ -987,7 +987,7 @@
             new Chart(crCtx, {
                 type: 'line',
                 data: {
-                    labels: Array.from({length: 24}, (_, i) => `2026-01-${i+1}`),
+                    labels: Array.from({length: 24}, (_, i) => `4/${(i % 30) + 1}/2026`),
                     datasets: [{
                         label: 'Daily CR',
                         data: [2.15, 2.28, 2.35, 2.42, 2.48, 2.55, 2.62, 2.68, 2.75, 2.82, 2.88, 2.95, 3.02, 3.08, 3.15, 3.22, 3.28, 3.35, 3.42, 3.48, 3.55, 3.62, 3.68, 3.75],
@@ -1030,7 +1030,7 @@
             new Chart(rrCtx, {
                 type: 'line',
                 data: {
-                    labels: Array.from({length: 24}, (_, i) => `2026-01-${i+1}`),
+                    labels: Array.from({length: 24}, (_, i) => `4/${(i % 30) + 1}/2026`),
                     datasets: [{
                         label: 'Daily RR',
                         data: [2.85, 2.78, 2.72, 2.65, 2.58, 2.52, 2.45, 2.38, 2.32, 2.25, 2.18, 2.12, 2.05, 1.98, 1.92, 1.85, 1.78, 1.72, 1.65, 1.58, 1.52, 1.45, 1.38, 1.32],
@@ -1073,7 +1073,7 @@
             new Chart(impCtx, {
                 type: 'line',
                 data: {
-                    labels: Array.from({length: 24}, (_, i) => `2026-01-${i+1}`),
+                    labels: Array.from({length: 24}, (_, i) => `4/${(i % 30) + 1}/2026`),
                     datasets: [{
                         label: 'Daily Impressions',
                         data: [850000, 875000, 895000, 920000, 945000, 970000, 995000, 1020000, 1045000, 1070000, 1095000, 1120000, 1145000, 1170000, 1195000, 1220000, 1245000, 1270000, 1295000, 1320000, 1345000, 1370000, 1395000, 1420000],
@@ -1116,7 +1116,7 @@
             new Chart(clickCtx, {
                 type: 'line',
                 data: {
-                    labels: Array.from({length: 24}, (_, i) => `2026-01-${i+1}`),
+                    labels: Array.from({length: 24}, (_, i) => `4/${(i % 30) + 1}/2026`),
                     datasets: [{
                         label: 'Daily Clicks',
                         data: [28500, 29250, 30100, 31000, 31900, 32800, 33700, 34600, 35500, 36400, 37300, 38200, 39100, 40000, 40900, 41800, 42700, 43600, 44500, 45400, 46300, 47200, 48100, 49000],
@@ -1159,7 +1159,7 @@
             new Chart(orderCtx, {
                 type: 'line',
                 data: {
-                    labels: Array.from({length: 24}, (_, i) => `2026-01-${i+1}`),
+                    labels: Array.from({length: 24}, (_, i) => `4/${(i % 30) + 1}/2026`),
                     datasets: [{
                         label: 'Daily Orders',
                         data: [8900, 9150, 9400, 9650, 9900, 10150, 10400, 10650, 10900, 11150, 11400, 11650, 11900, 12150, 12400, 12650, 12900, 13150, 13400, 13650, 13900, 14150, 14400, 14650],
@@ -1202,7 +1202,7 @@
             new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: Array.from({length: 24}, (_, i) => `2026-01-${i+1}`),
+                    labels: Array.from({length: 24}, (_, i) => `4/${(i % 30) + 1}/2026`),
                     datasets: [{
                         label: 'Daily Sales',
                         data: [125, 138, 142, 135, 155, 168, 172, 165, 178, 185, 192, 198, 205, 215, 225, 232, 240, 248, 255, 262, 270, 278, 285, 285].map(v => v * 1000),

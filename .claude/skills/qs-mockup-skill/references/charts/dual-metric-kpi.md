@@ -3,20 +3,89 @@
 ## Overview
 A KPI card displaying two metrics side by side: current period value and comparison period value with growth percentage.
 
+## CSS Styles (Embedded)
+
+```css
+.dual-metric-kpi {
+    flex: 0 0 33.33%;
+    max-width: 33.33%;
+}
+
+.dual-metric-kpi .visual-card {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 180px;
+    background-color: var(--qs-white);
+    border: 1px solid var(--qs-border-dark);
+    box-shadow: 0 1px 1px 0 rgba(0,28,36,.05);
+}
+
+.dual-metric-kpi .kpi-title {
+    font-size: 15px;
+    font-weight: bold;
+    color: var(--qs-text-main);
+    margin-bottom: 16px;
+}
+
+.dual-metric-kpi .main-value {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 32px;
+    font-weight: bold;
+    color: var(--qs-text-main);
+}
+
+.dual-metric-kpi .compare-section {
+    display: flex;
+    flex-direction: column;
+}
+
+.dual-metric-kpi .compare-label {
+    font-size: 12px;
+    color: var(--qs-text-muted);
+    margin-bottom: 6px;
+}
+
+.dual-metric-kpi .compare-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dual-metric-kpi .compare-value {
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--qs-text-main);
+}
+
+.dual-metric-kpi .change-percent {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.dual-metric-kpi .change-percent.positive {
+    color: #1d8102;
+}
+
+.dual-metric-kpi .change-percent.negative {
+    color: #d32f2f;
+}
+```
+
 ## HTML Structure
 
 ```html
-<div class="col" style="flex: 0 0 33.33%; max-width: 33.33%;">
-    <div class="visual-card" style="padding: 20px; display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
-        <div style="font-size: 15px; font-weight: bold; color: var(--qs-text-main); margin-bottom: 16px;">Sales</div>
-        <div style="text-align: center; margin-bottom: 20px;">
-            <div style="font-size: 32px; font-weight: bold; color: var(--qs-text-main);" id="mainSalesValue">$3,847,290</div>
-        </div>
-        <div>
-            <div style="font-size: 12px; color: var(--qs-text-muted); margin-bottom: 6px;">Compare to (Sales)</div>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div style="font-size: 18px; font-weight: bold; color: var(--qs-text-main);" id="compareSalesValue">$3,124,560</div>
-                <div style="font-size: 18px; font-weight: bold; color: #1d8102;" id="salesChangePercent">+23.1%</div>
+<div class="dual-metric-kpi">
+    <div class="visual-card">
+        <div class="kpi-title">Sales</div>
+        <div class="main-value" id="mainSalesValue">$3,847,290</div>
+        <div class="compare-section">
+            <div class="compare-label">Compare to (Sales)</div>
+            <div class="compare-row">
+                <div class="compare-value" id="compareSalesValue">$3,124,560</div>
+                <div class="change-percent positive" id="salesChangePercent">+23.1%</div>
             </div>
         </div>
     </div>

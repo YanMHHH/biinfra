@@ -4,6 +4,81 @@
 
 ---
 
+## CSS 样式（嵌入式）
+
+```css
+.kpi-card {
+    flex: 1;
+}
+
+.kpi-card .visual-card {
+    background-color: var(--qs-white);
+    border: 1px solid var(--qs-border-dark);
+    padding: 15px;
+    box-shadow: 0 1px 1px 0 rgba(0,28,36,.05);
+}
+
+.kpi-card .chart-title {
+    font-size: 15px;
+    font-weight: bold;
+    color: var(--qs-text-main);
+    margin-bottom: 10px;
+}
+
+.kpi-card .kpi-content {
+    text-align: center;
+}
+
+.kpi-card .kpi-value {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.kpi-card .kpi-progress-bar {
+    background: #f0f0f0;
+    height: 20px;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.kpi-card .kpi-progress-fill {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.kpi-card .kpi-value.highest {
+    color: #d13212;
+}
+
+.kpi-card .kpi-value.average {
+    color: #879596;
+}
+
+.kpi-card .kpi-value.lowest {
+    color: #1d8102;
+}
+
+.kpi-card .kpi-progress-fill.highest {
+    background: #d13212;
+}
+
+.kpi-card .kpi-progress-fill.average {
+    background: #879596;
+}
+
+.kpi-card .kpi-progress-fill.lowest {
+    background: #1d8102;
+}
+```
+
+---
+
 ## 一、基本结构
 
 ### 1.1 标准 KPI 卡片（带标题）

@@ -518,7 +518,7 @@
                 <div class="row">
                     <div class="col">
                         <div class="visual-card">
-                            <div class="chart-title">Priced Highest</div>
+                            <div class="chart-title">Highest-Priced Items</div>
                             <div style="text-align: center;">
                                 <div style="font-size: 32px; font-weight: bold; color: #d13212; margin-bottom: 10px;">1,245</div>
                                 <div style="background: #f0f0f0; height: 20px; border-radius: 3px; overflow: hidden;">
@@ -529,7 +529,7 @@
                     </div>
                     <div class="col">
                         <div class="visual-card">
-                            <div class="chart-title">Priced Average</div>
+                            <div class="chart-title">Mid-Priced Items</div>
                             <div style="text-align: center;">
                                 <div style="font-size: 32px; font-weight: bold; color: #879596; margin-bottom: 10px;">2,890</div>
                                 <div style="background: #f0f0f0; height: 20px; border-radius: 3px; overflow: hidden;">
@@ -540,7 +540,7 @@
                     </div>
                     <div class="col">
                         <div class="visual-card">
-                            <div class="chart-title">Priced Lowest</div>
+                            <div class="chart-title">Lowest-Priced Items</div>
                             <div style="text-align: center;">
                                 <div style="font-size: 32px; font-weight: bold; color: #1d8102; margin-bottom: 10px;">312</div>
                                 <div style="background: #f0f0f0; height: 20px; border-radius: 3px; overflow: hidden;">
@@ -1370,9 +1370,9 @@
                 data: {
                     labels: categoryData.map(d => d.name),
                     datasets: [
-                        { label: 'Priced Highest', data: categoryData.map(d => d.highest), backgroundColor: '#d13212' },
-                        { label: 'Priced Average', data: categoryData.map(d => d.average), backgroundColor: '#879596' },
-                        { label: 'Priced Lowest', data: categoryData.map(d => d.lowest), backgroundColor: '#1d8102' }
+                        { label: 'Highest-Priced Items', data: categoryData.map(d => d.highest), backgroundColor: '#d13212' },
+                        { label: 'Mid-Priced Items', data: categoryData.map(d => d.average), backgroundColor: '#879596' },
+                        { label: 'Lowest-Priced Items', data: categoryData.map(d => d.lowest), backgroundColor: '#1d8102' }
                     ]
                 },
                 options: {
@@ -1416,9 +1416,9 @@
                 data: {
                     labels: brandData.map(d => d.name),
                     datasets: [
-                        { label: 'Priced Highest', data: brandData.map(d => d.highest), backgroundColor: '#d13212' },
-                        { label: 'Priced Average', data: brandData.map(d => d.average), backgroundColor: '#879596' },
-                        { label: 'Priced Lowest', data: brandData.map(d => d.lowest), backgroundColor: '#1d8102' }
+                        { label: 'Highest-Priced Items', data: brandData.map(d => d.highest), backgroundColor: '#d13212' },
+                        { label: 'Mid-Priced Items', data: brandData.map(d => d.average), backgroundColor: '#879596' },
+                        { label: 'Lowest-Priced Items', data: brandData.map(d => d.lowest), backgroundColor: '#1d8102' }
                     ]
                 },
                 options: {

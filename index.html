@@ -910,6 +910,13 @@
             changeElem.style.color = changeColor;
         }
 
+        const currencyMap = {
+            'US($)': '$',
+            'CA(C$)': 'C$',
+            'AU(A$)': 'A$',
+            'CN(¥)': '¥'
+        };
+
         function updateTab2CompetitorText() {
             const priceControls = document.getElementById('controls-grid-price');
             const comparisonScopeSelect = Array.from(priceControls.querySelectorAll('.control-item')).find(item =>
@@ -926,6 +933,91 @@
                 storeText = 'All Modesens Stores';
             }
             textBox.textContent = `My Competitor Stores: ${storeText}`;
+        }
+
+        function updatePriceTableCurrency() {
+            const priceControls = document.getElementById('controls-grid-price');
+            const countrySelect = Array.from(priceControls.querySelectorAll('.control-item')).find(item =>
+                item.querySelector('label')?.textContent === 'Country'
+            )?.querySelector('select');
+            if (!countrySelect) return;
+
+            const currency = currencyMap[countrySelect.value] || '$';
+            const tbody = document.getElementById('productTableBody');
+            const rows = tbody.querySelectorAll('tr');
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length >= 9) {
+                    cells[3].textContent = currency + cells[3].textContent.replace(/^[$C¥A]+/, '');
+                    cells[4].textContent = currency + cells[4].textContent.replace(/^[$C¥A]+/, '');
+                    cells[7].textContent = currency + cells[7].textContent.replace(/^[$C¥A]+/, '');
+                    cells[8].textContent = currency + cells[8].textContent.replace(/^[$C¥A]+/, '');
+                }
+            });
+        }
+
+        function updateTab3OverlapCurrency() {
+            const inventoryControls = document.getElementById('controls-grid-inventory');
+            const countrySelect = Array.from(inventoryControls.querySelectorAll('.control-item')).find(item =>
+                item.querySelector('label')?.textContent === 'Country'
+            )?.querySelector('select');
+            if (!countrySelect) return;
+
+            const currency = currencyMap[countrySelect.value] || '$';
+            const overlapProductBody = document.getElementById('overlapProductTableBody');
+            const rows = overlapProductBody.querySelectorAll('tr');
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length >= 10) {
+                    cells[3].textContent = currency + cells[3].textContent.replace(/^[$C¥A]+/, '');
+                    cells[4].textContent = currency + cells[4].textContent.replace(/^[$C¥A]+/, '');
+                    cells[8].textContent = currency + cells[8].textContent.replace(/^[$C¥A]+/, '');
+                    cells[9].textContent = currency + cells[9].textContent.replace(/^[$C¥A]+/, '');
+                }
+            });
+        }
+
+        function updateTab3GapsCurrency() {
+            const inventoryControls = document.getElementById('controls-grid-inventory');
+            const countrySelect = Array.from(inventoryControls.querySelectorAll('.control-item')).find(item =>
+                item.querySelector('label')?.textContent === 'Country'
+            )?.querySelector('select');
+            if (!countrySelect) return;
+
+            const currency = currencyMap[countrySelect.value] || '$';
+            const gapsProductBody = document.getElementById('outOfStockProductTableBody');
+            const rows = gapsProductBody.querySelectorAll('tr');
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length >= 7) {
+                    cells[4].textContent = currency + cells[4].textContent.replace(/^[$C¥A]+/, '');
+                    cells[5].textContent = currency + cells[5].textContent.replace(/^[$C¥A]+/, '');
+                    cells[6].textContent = currency + cells[6].textContent.replace(/^[$C¥A]+/, '');
+                }
+            });
+        }
+
+        function updateTab3ExclusivelyCurrency() {
+            const inventoryControls = document.getElementById('controls-grid-inventory');
+            const countrySelect = Array.from(inventoryControls.querySelectorAll('.control-item')).find(item =>
+                item.querySelector('label')?.textContent === 'Country'
+            )?.querySelector('select');
+            if (!countrySelect) return;
+
+            const currency = currencyMap[countrySelect.value] || '$';
+            const exclusivelyProductBody = document.getElementById('exclusivelyProductTableBody');
+            const rows = exclusivelyProductBody.querySelectorAll('tr');
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length >= 5) {
+                    cells[3].textContent = currency + cells[3].textContent.replace(/^[$C¥A]+/, '');
+                    cells[4].textContent = currency + cells[4].textContent.replace(/^[$C¥A]+/, '');
+                }
+            });
         }
 
         const getStepSize = (max) => {
@@ -1444,6 +1536,27 @@
             if (comparisonScopeSelect) {
                 comparisonScopeSelect.addEventListener('change', updateTab2CompetitorText);
                 updateTab2CompetitorText();
+            }
+
+            // Update currency on Country change
+            const countrySelect = Array.from(priceControls.querySelectorAll('.control-item')).find(item =>
+                item.querySelector('label')?.textContent === 'Country'
+            )?.querySelector('select');
+            if (countrySelect) {
+                countrySelect.addEventListener('change', updatePriceTableCurrency);
+            }
+
+            // Update tab3 overlap currency on Country change
+            const inventoryControls = document.getElementById('controls-grid-inventory');
+            const inventoryCountrySelect = Array.from(inventoryControls.querySelectorAll('.control-item')).find(item =>
+                item.querySelector('label')?.textContent === 'Country'
+            )?.querySelector('select');
+            if (inventoryCountrySelect) {
+                inventoryCountrySelect.addEventListener('change', () => {
+                    updateTab3OverlapCurrency();
+                    updateTab3GapsCurrency();
+                    updateTab3ExclusivelyCurrency();
+                });
             }
 
             // Inventory Charts

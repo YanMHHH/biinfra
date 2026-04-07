@@ -1842,7 +1842,13 @@
             const overlapProductBody = document.getElementById('overlapProductTableBody');
             overlapProductData.forEach(p => {
                 const tr = overlapProductBody.insertRow();
-                tr.innerHTML = `<td><div class="qs-img-placeholder">N/A</div></td><td>${p.name}</td><td>${p.brand}</td><td>$${p.fullPrice}</td><td>$${p.myPrice}</td><td>${p.discount}</td><td>${p.priceType}</td><td>${p.stores}</td><td>$${p.minPrice}</td><td>$${p.maxPrice}</td><td><a href="https://www.modesens.com" target="_blank" style="color: #0073bb; text-decoration: none;">Link</a></td><td>${p.gender}</td><td>${p.category}</td><td>${p.subCategory}</td>`;
+                let pricePositionClass = '';
+                if (p.priceType === 'Highest') {
+                    pricePositionClass = 'price-position-highest';
+                } else if (p.priceType === 'Lowest') {
+                    pricePositionClass = 'price-position-lowest';
+                }
+                tr.innerHTML = `<td><div class="qs-img-placeholder">N/A</div></td><td>${p.name}</td><td>${p.brand}</td><td>$${p.fullPrice}</td><td>$${p.myPrice}</td><td>${p.discount}</td><td class="${pricePositionClass}">${p.priceType}</td><td>${p.stores}</td><td>$${p.minPrice}</td><td>$${p.maxPrice}</td><td><a href="https://www.modesens.com" target="_blank" style="color: #0073bb; text-decoration: none;">Link</a></td><td>${p.gender}</td><td>${p.category}</td><td>${p.subCategory}</td>`;
             });
 
             // Out-of-stock Brand data
